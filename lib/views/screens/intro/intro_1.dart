@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/glob_widgets/my_button.dart';
+import 'package:women_health/views/screens/intro/questions_screen.dart';
 
 class IntroFirstScreen extends StatelessWidget {
   const IntroFirstScreen({super.key});
@@ -17,29 +18,56 @@ class IntroFirstScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: Column(
+          Expanded(
+              flex: 1,
+              child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
 
             ],
           )),
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.secondColor,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(AppConstant.defaultRadius), topRight: Radius.circular(AppConstant.defaultRadius)),
-            ),
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MyButton(onTap: (){}, child: Text('Get Started',style: AppTheme.titleSmall,))
-                ],
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.bluebg,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(AppTheme.defaultRadius), topRight: Radius.circular(AppTheme.defaultRadius)),
               ),
-            )
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Stack(
+                  children: [
+
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 15,
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Welcome to',style: AppTheme.titleMedium.copyWith(color: AppTheme.secondColor)),
+                          Text('Nirbhoya',style: AppTheme.titleLarge.copyWith(color: AppTheme.primaryColor)),
+                          const SizedBox(height: 50),
+                          Text('Track your cycle with accuracy and understand your body\'s natural rhythm.',style: AppTheme.titleMedium.copyWith(color: Colors.black26),textAlign: TextAlign.center,)
+                        ],
+                      ),
+                    ),
+
+                    Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 15,
+                        child: MyButton(onTap: (){
+                          Get.to(()=>QuestionsScreen());
+                        }, child: Text('Get Started')))
+                  ],
+                ),
+              )
+            ),
           )
         ],
       ),

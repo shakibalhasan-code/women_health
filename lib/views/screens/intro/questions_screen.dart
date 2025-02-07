@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:women_health/core/helper/user_info_helper.dart';
+import 'package:women_health/views/glob_widgets/global_question_container.dart';
 import '../../../utils/constant/app_theme.dart';
 
 class QuestionsScreen extends StatelessWidget {
@@ -22,32 +23,6 @@ class QuestionsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: AppTheme.secondColor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(AppTheme.defaultRadius)
-                  ),
-                  child: Obx(()=> Stack(
-                    children: [
-                      LinearProgressIndicator(
-                        color: Colors.grey,
-                        backgroundColor: AppTheme.secondColor.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-                        minHeight: double.infinity, // This makes the indicator fill the height of its parent
-                        value: _userInformation.completedQuestion.value.toDouble() /10, // value between 0.0 and 1.0
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.secondColor), // Use AlwaysStoppedAnimation for a constant color
-                      ),
-                      Center(child: Text('${_userInformation.completedQuestion} of 10',style: AppTheme.titleMedium))
-
-                    ],
-                  ))
-                )),
-
-              const SizedBox(height: 10),
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -55,16 +30,68 @@ class QuestionsScreen extends StatelessWidget {
                     color: AppTheme.secondColor.withOpacity(0.3),
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(AppTheme.defaultRadius), topRight: Radius.circular(AppTheme.defaultRadius)),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ///step progress
+                      Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppTheme.secondColor.withOpacity(0.3),
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(AppTheme.defaultRadius),topRight: Radius.circular(AppTheme.defaultRadius)),
 
+                          ),
+                          child: Obx(()=> Stack(
+                            children: [
+                              LinearProgressIndicator(
+                                color: Colors.grey,
+                                backgroundColor: AppTheme.secondColor.withOpacity(0.3),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(AppTheme.defaultRadius),topRight: Radius.circular(AppTheme.defaultRadius)),
+                                minHeight: double.infinity, // This makes the indicator fill the height of its parent
+                                value: _userInformation.completedQuestion.value.toDouble() /10, // value between 0.0 and 1.0
+                                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.secondColor), // Use AlwaysStoppedAnimation for a constant color
+                              ),
+                              Center(child: Text('${_userInformation.completedQuestion} of 10',style: AppTheme.titleMedium.copyWith(color: AppTheme.secondColor,fontWeight: FontWeight.bold)))
 
+                            ],
+                          ))
+                      ), ///end of progress step
 
-                        ],
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            MyGlobalQuestionContainer(
+                                question: 'What is your gender?',
+                                child: Row(
+                                  children: [
+
+                                  ],
+                                ), isDone: true),
+                            const SizedBox(height: 5,),
+                            MyGlobalQuestionContainer(
+                                question: 'What is your gender?',
+                                child: Row(
+                                  children: [
+
+                                  ],
+                                ), isDone: true),
+                            const SizedBox(height: 5,),
+
+                            MyGlobalQuestionContainer(
+                                question: 'What is your gender?',
+                                child: Row(
+                                  children: [
+
+                                  ],
+                                ), isDone: true),
+
+                          ],
+                        ),
+                      )
+
+                      ],
                   ),
                   ),
               ),

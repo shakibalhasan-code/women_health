@@ -7,7 +7,7 @@ class UserHelper extends GetxService {
   var periodDuration = 5.obs;
   var cycleLength = 28.obs;
 
-  var completedQuestion = 1.obs;
+  var completedQuestion = 2.obs;
   final instance = MenstrualCycleWidget.instance!;
 
   @override

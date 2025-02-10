@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
@@ -20,13 +21,16 @@ class IntroFirstScreen extends StatelessWidget {
         children: [
           Expanded(
               flex: 1,
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+              child: Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
 
-            ],
-          )),
+                            ],
+                          ),
+              )),
           Expanded(
             flex: 1,
             child: Container(

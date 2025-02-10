@@ -4,17 +4,19 @@ import 'package:women_health/utils/constant/app_constant.dart';
 
 class AppTheme {
 
-  static Color primaryColor = Colors.deepOrange;
+  static Color primaryColor = Color(0xffE05D43);
   static Color secondColor = Color(0xff298E5F);
+  static Color secondTransColor = Color(0xffD2EFE2);
+  static Color blue50 = Color(0xffEDF4FC);
+  static Color black400 = Color(0xff585858);
   static Color blue = Color(0xff64B5F6);
   static Color bluebg = blue.withOpacity(0.2);
   static Color highListColor = Color(0xffD81B60);
   static Color foregroundColor = Colors.white;
   static Color fillColor = Color(0xffffff);
-
-  static TextStyle titleSmall = GoogleFonts.poppins(fontSize: 12,color: Colors.white);
-  static TextStyle titleMedium = GoogleFonts.poppins(fontSize: 14,color: Colors.white);
-  static TextStyle titleLarge = GoogleFonts.poppins(fontSize: 26,color: Colors.white,fontWeight: FontWeight.w700);
+  static TextStyle titleSmall = GoogleFonts.poppins(fontSize: 14,color: primaryColor);
+  static TextStyle titleMedium = GoogleFonts.poppins(fontSize: 18,color: primaryColor);
+  static TextStyle titleLarge = GoogleFonts.poppins(fontSize: 26,color: primaryColor,fontWeight: FontWeight.w700);
 
   static double defaultRadius = 20;
 
@@ -31,7 +33,11 @@ class AppTheme {
         fontSize: 18,
     ),
   ),
-
+  appBarTheme: AppBarTheme(
+    elevation: 1,
+    backgroundColor: Colors.white,
+    shadowColor: AppTheme.primaryColor.withOpacity(0.3)
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: primaryColor,

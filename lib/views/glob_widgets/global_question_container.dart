@@ -11,8 +11,15 @@ class MyGlobalQuestionContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.secondColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(AppTheme.defaultRadius)
+        color: isDone ? AppTheme.secondTransColor: AppTheme.blue50,
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            blurStyle: BlurStyle.solid,
+            blurRadius: 2
+          )
+        ]
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -20,12 +27,11 @@ class MyGlobalQuestionContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(Icons.done,color: isDone ? AppTheme.secondColor : Colors.grey),
-            const SizedBox(width: 8),
             Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(question,style: AppTheme.titleMedium.copyWith(color: AppTheme.secondColor)),
+                Text(question,style: AppTheme.titleMedium.copyWith(color: AppTheme.black400)),
+                const SizedBox(height: 5),
                 child
               ],
             ))

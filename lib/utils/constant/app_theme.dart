@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
 
 class AppTheme {
@@ -13,12 +14,22 @@ class AppTheme {
   static Color bluebg = blue.withOpacity(0.2);
   static Color highListColor = Color(0xffD81B60);
   static Color foregroundColor = Colors.white;
-  static Color fillColor = Color(0xffffff);
+  static Color? fillColor = Colors.grey[200];
   static TextStyle titleSmall = GoogleFonts.poppins(fontSize: 14,color: primaryColor);
   static TextStyle titleMedium = GoogleFonts.poppins(fontSize: 18,color: primaryColor);
   static TextStyle titleLarge = GoogleFonts.poppins(fontSize: 26,color: primaryColor,fontWeight: FontWeight.w700);
 
   static double defaultRadius = 20;
+
+  static PinTheme pinTheme = PinTheme(
+    shape: PinCodeFieldShape.box,
+    borderRadius: BorderRadius.circular(10),
+    fieldHeight: 50,
+    fieldWidth: 40,
+    activeColor: primaryColor,
+    selectedColor: primaryColor,
+    inactiveColor: Colors.black,
+  );
 
 
   static  var theme = ThemeData(
@@ -54,23 +65,12 @@ class AppTheme {
   ),
 
     inputDecorationTheme: InputDecorationTheme(
-      hintStyle: titleSmall.copyWith(color: Colors.grey),
-      focusColor: secondColor,
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-        borderSide: BorderSide(color: secondColor)
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-        borderSide: BorderSide(color: secondColor)
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-        borderSide: BorderSide(color: Colors.grey)
-      ),
-      fillColor: fillColor,
-      filled: true,
-
-    )
+      filled: true, // Enable filling the background
+      fillColor: Colors.grey[200], // Set the background color (light grey in this case)
+      border: InputBorder.none, // Remove the default border
+      enabledBorder: InputBorder.none, // Remove the border when the input is enabled
+      focusedBorder: InputBorder.none, // Remove the border when the input is focused
+      contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0), // Add padding for better spacing
+    ),
   );
 }

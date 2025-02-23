@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
+import 'package:women_health/utils/constant/route.dart';
 import 'package:women_health/views/glob_widgets/my_button.dart';
 import 'package:women_health/views/screens/auth/widgets/auth_icon_widget.dart';
 
@@ -40,9 +41,7 @@ class LoginScreen extends StatelessWidget {
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Password',
-
                     ),
-
                   ),
                   SizedBox(height: 15.h,),
                   Row(
@@ -53,14 +52,15 @@ class LoginScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 5.h),
-                  MyButton(onTap: (){}, child: Text('SignIn')),
+                  MyButton(onTap: (){
+                    Get.toNamed(AppRoute.tab);
+                  }, child: Text('SignIn')),
                   SizedBox(height: 10.h,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(onPressed: ()=> Get.toNamed('/signup'), child: Text('Don\'t have any account ? Create Now',style: AppTheme.titleSmall.copyWith(color: AppTheme.primaryColor)))
-
                     ],
                   )
                 ],

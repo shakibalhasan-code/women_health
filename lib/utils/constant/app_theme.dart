@@ -15,6 +15,13 @@ class AppTheme {
   static Color highListColor = Color(0xffD81B60);
   static Color foregroundColor = Colors.white;
   static Color? fillColor = Colors.grey[200];
+
+  static Color blueCard = Color(0xffEDF4FCCC);
+  static Color orangeCard = Color(0xffFFE9E3CC);
+  static Color greenCard = Color(0xffBEE0D0);
+  static Color yelloward = Color(0xffFCF6E8);
+
+
   static TextStyle titleSmall = GoogleFonts.poppins(fontSize: 14,color: primaryColor);
   static TextStyle titleMedium = GoogleFonts.poppins(fontSize: 18,color: primaryColor);
   static TextStyle titleLarge = GoogleFonts.poppins(fontSize: 26,color: primaryColor,fontWeight: FontWeight.w700);

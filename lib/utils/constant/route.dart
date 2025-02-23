@@ -3,6 +3,7 @@ import 'package:women_health/views/screens/auth/forget_pass_screen.dart';
 import 'package:women_health/views/screens/auth/login_screen.dart';
 import 'package:women_health/views/screens/auth/sign_up_screen.dart';
 import 'package:women_health/views/screens/auth/verify_email_otp_screen.dart';
+import 'package:women_health/views/screens/home/home_screen.dart';
 import 'package:women_health/views/screens/intro/intro_1.dart';
 import 'package:women_health/views/screens/tab/tab_screen.dart';
 
@@ -18,7 +19,7 @@ class AppRoute {
   static List<GetPage> pages = [
     GetPage(name: tab, page: ()=> TabScreen()),
     GetPage(name: intro1, page: ()=> const IntroFirstScreen()),
-    GetPage(name: home, page: ()=> const IntroFirstScreen()),
+    GetPage(name: home, page: ()=> const HomeScreen()),
     GetPage(name: login, page: ()=> const LoginScreen()),
     GetPage(name: forget, page: ()=> const ForgetScreen()),
     GetPage(name: signUp, page: ()=> const SignUpScreen()),

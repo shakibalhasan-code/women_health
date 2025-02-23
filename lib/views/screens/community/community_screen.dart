@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
+import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/glob_widgets/my_button.dart';
 
@@ -42,7 +43,7 @@ class CommunityScreen extends StatelessWidget {
                           height: 50,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-                            child: Image.asset(AppConstant.avatarIcon,fit: BoxFit.cover,),
+                            child: Image.asset(AppIcons.avatarIcon,fit: BoxFit.cover,),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -97,7 +98,7 @@ class CommunityScreen extends StatelessWidget {
                               height: 50,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
-                                child: Image.asset(AppConstant.avatarIcon,fit: BoxFit.cover,),
+                                child: Image.asset(AppIcons.avatarIcon,fit: BoxFit.cover,),
                               ),
                             ),
                             const SizedBox(width: 8),

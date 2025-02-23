@@ -10,7 +10,7 @@ class MyTabController extends GetxController{
   var currentIndex = 0.obs;
 
   RxList<Widget> screen = [
-    const HomeScreen(),
+     HomeScreen(),
     const MonthlyScreen(),
     const CommunityScreen(),
     const AnalysisScreen(),

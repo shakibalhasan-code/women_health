@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:menstrual_cycle_widget/ui/menstrual_cycle_phase_view.dart';
+import 'package:menstrual_cycle_widget/utils/enumeration.dart';
+import 'package:women_health/controller/period_data_controller.dart';
 import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
+import 'package:women_health/views/screens/edit_period/edit_period_screen.dart';
+import 'package:women_health/views/screens/home/components/menstrual_cycle.dart';
+import 'package:women_health/views/screens/monthly/monthly_screen.dart';
 
 import 'components/home_card_widget.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+   HomeScreen({super.key});
+
+   final periodDataController = Get.find<PeriodDataController>();
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +37,28 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Container bodyPeriodContainer() {
-    return Container(
-
-          );
+  Widget bodyPeriodContainer() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding:  EdgeInsets.symmetric(horizontal: 10.w),
+        child: Column(
+          children: [
+            MenstrualCyclePhaseView(
+              size: 250.h,
+              theme: MenstrualCycleTheme.arcs,
+              phaseTextBoundaries: PhaseTextBoundaries.outside,
+              isRemoveBackgroundPhaseColor: true,
+              viewType: MenstrualCycleViewType.text,
+              isAutoSetData: false,
+            ),
+             SizedBox(height: 15.h,),
+            SizedBox(width: 200.w,
+            child: OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period')),
+            )
+          ]
+              ),
+      ),
+    );
   }
 
   AppBar buildAppBar() {

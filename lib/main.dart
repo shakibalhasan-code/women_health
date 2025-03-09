@@ -14,7 +14,6 @@ void main() async {
     secretKey: "w4rvj53boj53oc92lus2uq6r",
     ivKey: "1w0mv7gldel0mcpecdnjt409",
   );
-
   runApp(MyApp());
 }
 
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
           home: child,
         );
       },
-      child: const LoginScreen(), // Set your initial screen here
     );
   }
 }

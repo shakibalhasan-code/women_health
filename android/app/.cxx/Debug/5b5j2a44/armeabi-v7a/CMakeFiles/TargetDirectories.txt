@@ -1,0 +1,2 @@
+C:/Users/Shakib/women_health/android/app/.cxx/Debug/5b5j2a44/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Shakib/women_health/android/app/.cxx/Debug/5b5j2a44/armeabi-v7a/CMakeFiles/rebuild_cache.dir

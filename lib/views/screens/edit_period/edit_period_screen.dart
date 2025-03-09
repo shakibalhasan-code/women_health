@@ -10,6 +10,7 @@ class EditPeriodScreen extends StatefulWidget {
 }
 
 class _EditPeriodScreenState extends State<EditPeriodScreen> {
+
   late DateTime symptomsLogDate;
 
   @override
@@ -31,7 +32,9 @@ class _EditPeriodScreenState extends State<EditPeriodScreen> {
       symptomsLogDate: symptomsLogDate,
       // onDateChanged: updateDate, // Ensure onDateChanged updates the state
       onError: () {},
-      onSuccess: (int id) {},
+      onSuccess: (int id) {
+
+      },
     );
   }
 }

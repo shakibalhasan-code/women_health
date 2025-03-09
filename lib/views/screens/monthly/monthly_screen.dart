@@ -19,7 +19,9 @@ class MonthlyScreen extends StatelessWidget {
         themeColor: AppTheme.black400,
         hideInfoView: false,
         daySelectedColor: Colors.blue,
-        onDataChanged: (value) {},
+        onDataChanged: (value) {
+          print(value);
+        },
       ),
     );
   }

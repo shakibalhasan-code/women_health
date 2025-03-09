@@ -25,39 +25,47 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: buildAppBar(),
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            SizedBox(height: 20.h),
-            Expanded(child: bodyPeriodContainer()),
-            _buildGridCards(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeader(),
+              SizedBox(height: 10.h),
+              SizedBox(
+                width: 250,
+                height: 300,
+                child: MenstrualCyclePhaseView(
+                  size: 180.h,
+                  theme: MenstrualCycleTheme.arcs,
+                  phaseTextBoundaries: PhaseTextBoundaries.outside,
+                  isRemoveBackgroundPhaseColor: true,
+                  viewType: MenstrualCycleViewType.text,
+                  isAutoSetData: true,
+                ),
+              ),
+
+              OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period')),
+              SizedBox(height: 10.h),
+              _buildGridCards(),
+
+            ],
+          ),
         ),
       ),
     );
   }
 
+
+
   Widget bodyPeriodContainer() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 10.w),
-        child: Column(
-          children: [
-            MenstrualCyclePhaseView(
-              size: 250.h,
-              theme: MenstrualCycleTheme.arcs,
-              phaseTextBoundaries: PhaseTextBoundaries.outside,
-              isRemoveBackgroundPhaseColor: true,
-              viewType: MenstrualCycleViewType.text,
-              isAutoSetData: false,
+    return Padding(
+      padding:  EdgeInsets.symmetric(horizontal: 10.w),
+      child: Column(
+        children: [
+
+           SizedBox(height: 15.h,),
+          OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period'))
+        ]
             ),
-             SizedBox(height: 15.h,),
-            SizedBox(width: 200.w,
-            child: OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period')),
-            )
-          ]
-              ),
-      ),
     );
   }
 

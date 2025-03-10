@@ -17,7 +17,8 @@ class HomeCardWidget extends StatelessWidget {
     required this.title,
     required this.subTitle,
     required this.cardColor,
-    required this.borderColor, required this.iconColor,
+    required this.borderColor,
+    required this.iconColor,
   });
 
   @override
@@ -43,7 +44,6 @@ class HomeCardWidget extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 2,
-
                 ),
               ],
             ),
@@ -57,11 +57,17 @@ class HomeCardWidget extends StatelessWidget {
           SizedBox(height: 3.h),
           Text(
             title,
-            style: AppTheme.titleMedium.copyWith(fontSize: 14.sp,color: AppTheme.black400),
+            style: AppTheme.titleMedium.copyWith(
+                fontSize: 12.sp,
+                color: AppTheme.black400,
+                fontWeight: FontWeight.bold),
           ),
-          Text(
-            subTitle,
-            style: AppTheme.titleSmall.copyWith(fontSize: 10.sp,color: AppTheme.black400),
+          Expanded(
+            child: Text(
+              subTitle,
+              style: AppTheme.titleSmall
+                  .copyWith(fontSize: 10.sp, color: AppTheme.black400),
+            ),
           ),
         ],
       ),

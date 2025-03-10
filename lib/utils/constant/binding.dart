@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/controller/intro_controller/intro_controller.dart';
 import 'package:women_health/controller/marketplace_controller.dart';
 import 'package:women_health/controller/period_data_controller.dart';
@@ -14,5 +15,6 @@ class InitialBinding extends Bindings {
     Get.lazyPut(() => UserHelper());
     Get.lazyPut(() => PeriodDataController());
     Get.lazyPut(() => MarketplaceController(), fenix: true);
+    Get.lazyPut(() => CommunityController(), fenix: true);
   }
 }

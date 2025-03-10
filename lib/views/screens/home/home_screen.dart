@@ -15,9 +15,9 @@ import 'package:women_health/views/screens/monthly/monthly_screen.dart';
 import 'components/home_card_widget.dart';
 
 class HomeScreen extends StatelessWidget {
-   HomeScreen({super.key});
+  HomeScreen({super.key});
 
-   final periodDataController = Get.find<PeriodDataController>();
+  final periodDataController = Get.find<PeriodDataController>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildHeader(),
+              // _buildHeader(),
               SizedBox(height: 10.h),
               SizedBox(
                 width: 250,
@@ -38,15 +38,16 @@ class HomeScreen extends StatelessWidget {
                   theme: MenstrualCycleTheme.arcs,
                   phaseTextBoundaries: PhaseTextBoundaries.outside,
                   isRemoveBackgroundPhaseColor: true,
-                  viewType: MenstrualCycleViewType.text,
+                  viewType: MenstrualCycleViewType.circleText,
                   isAutoSetData: true,
                 ),
               ),
 
-              OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period')),
+              OutlinedButton(
+                  onPressed: () => Get.to(EditPeriodScreen()),
+                  child: Text('Edit Period')),
               SizedBox(height: 10.h),
               _buildGridCards(),
-
             ],
           ),
         ),
@@ -54,18 +55,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-
-
   Widget bodyPeriodContainer() {
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 10.w),
-      child: Column(
-        children: [
-
-           SizedBox(height: 15.h,),
-          OutlinedButton(onPressed: ()=> Get.to(EditPeriodScreen()), child: Text('Edit Period'))
-        ]
-            ),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: Column(children: [
+        SizedBox(
+          height: 15.h,
+        ),
+        OutlinedButton(
+            onPressed: () => Get.to(EditPeriodScreen()),
+            child: Text('Edit Period'))
+      ]),
     );
   }
 
@@ -102,7 +102,7 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Your next period on 26 Feb",
+                "Set reminder ",
                 style: AppTheme.titleSmall.copyWith(color: Colors.white),
               ),
             ],
@@ -150,7 +150,6 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: 5.h),
           Row(
             children: [
-
               Expanded(
                 child: HomeCardWidget(
                   iconPath: AppIcons.mentalHealthIcon,
@@ -168,4 +167,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-

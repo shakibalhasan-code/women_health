@@ -3,6 +3,7 @@ import 'package:women_health/views/screens/auth/forget_pass_screen.dart';
 import 'package:women_health/views/screens/auth/login_screen.dart';
 import 'package:women_health/views/screens/auth/sign_up_screen.dart';
 import 'package:women_health/views/screens/auth/verify_email_otp_screen.dart';
+import 'package:women_health/views/screens/community/add_new_post.dart';
 import 'package:women_health/views/screens/home/home_screen.dart';
 import 'package:women_health/views/screens/intro/intro_1.dart';
 import 'package:women_health/views/screens/marketplace/marketplace_screen.dart';
@@ -17,6 +18,7 @@ class AppRoute {
   static String signUp = "/signup";
   static String verify = "/verify";
   static String marketPlace = "/marketPlace";
+  static String newPost = "/newPost";
 
   static List<GetPage> pages = [
     GetPage(name: tab, page: () => TabScreen()),
@@ -26,6 +28,7 @@ class AppRoute {
     GetPage(name: forget, page: () => const ForgetScreen()),
     GetPage(name: signUp, page: () => const SignUpScreen()),
     GetPage(name: verify, page: () => const VerifyEmailOtpScreen()),
-    GetPage(name: marketPlace, page: () => MarketplaceScreen())
+    GetPage(name: marketPlace, page: () => MarketplaceScreen()),
+    GetPage(name: newPost, page: () => CreatePostScreen()),
   ];
 }

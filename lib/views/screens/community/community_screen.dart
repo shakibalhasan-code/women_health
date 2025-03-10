@@ -8,9 +8,11 @@ import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
+import 'package:women_health/utils/constant/route.dart';
 import 'package:women_health/views/glob_widgets/my_button.dart';
 import 'package:women_health/views/screens/community/components/post_category_item.dart';
 import 'package:women_health/views/screens/community/components/post_item.dart';
+import 'package:women_health/views/screens/community/matched_following_screen.dart';
 
 import '../../../utils/helper/widget_helper.dart';
 
@@ -76,11 +78,15 @@ class CommunityScreen extends StatelessWidget {
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600)),
           SizedBox(height: 8.h),
-          SizedBox(
-            width: double.infinity,
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Write here',
+          InkWell(
+            onTap: () => Get.toNamed(AppRoute.newPost),
+            child: SizedBox(
+              width: double.infinity,
+              child: TextField(
+                enabled: false,
+                decoration: InputDecoration(
+                  hintText: 'Write here',
+                ),
               ),
             ),
           ),
@@ -116,14 +122,20 @@ class CommunityScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            SvgPicture.asset(
-              AppIcons.saveIcon,
-              color: Colors.black,
+            InkWell(
+              onTap: () {},
+              child: SvgPicture.asset(
+                AppIcons.saveIcon,
+                color: Colors.black,
+              ),
             ),
-            SvgPicture.asset(
-              AppIcons.personIcon,
-              color: Colors.black,
-            )
+            // InkWell(
+            //   onTap: () => Get.to(MatchFollowingScreen()),
+            //   child: SvgPicture.asset(
+            //     AppIcons.personIcon,
+            //     color: Colors.black,
+            //   ),
+            // )
           ],
         ),
       ),

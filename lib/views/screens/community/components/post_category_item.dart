@@ -17,7 +17,7 @@ class PostCategoryItem extends StatelessWidget {
         padding: EdgeInsets.symmetric(
             horizontal: 12.w, vertical: 6.h), // Add padding
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor : AppTheme.secondTransColor,
+          color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
           borderRadius: BorderRadius.circular(20.w),
           border: Border.all(
               color: isSelected

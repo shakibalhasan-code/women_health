@@ -8,6 +8,7 @@ import 'package:women_health/views/glob_widgets/my_button.dart';
 import 'package:women_health/views/screens/auth/forget_pass_screen.dart';
 import 'package:women_health/views/screens/auth/sign_up_screen.dart';
 import 'package:women_health/views/screens/auth/widgets/auth_icon_widget.dart';
+import 'package:women_health/views/screens/intro/questions_screen.dart';
 
 import '../../../utils/constant/app_icons.dart';
 
@@ -64,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 5.h),
                     MyButton(
                         onTap: () {
-                          Get.toNamed(AppRoute.tab);
+                          Get.to(QuestionnaireScreen());
                         },
                         child: Text('SignIn')),
                     SizedBox(

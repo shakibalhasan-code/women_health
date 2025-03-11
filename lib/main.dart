@@ -6,7 +6,7 @@ import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/utils/constant/binding.dart';
 import 'package:women_health/utils/constant/route.dart';
 import 'package:women_health/views/screens/auth/login_screen.dart';
-import 'package:women_health/views/screens/intro/intro_1.dart';
+import 'package:women_health/views/screens/intro/intro.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
-          initialRoute: AppRoute.login,
+          initialRoute: AppRoute.intro1,
           getPages: AppRoute.pages,
           theme: AppTheme.theme,
           initialBinding: InitialBinding(),

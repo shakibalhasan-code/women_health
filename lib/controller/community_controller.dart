@@ -40,4 +40,6 @@ class CommunityController extends GetxController {
       'image': 'https://example.com/elena.jpg',
     },
   ).obs;
+
+  var isLikedPost = false.obs;
 }

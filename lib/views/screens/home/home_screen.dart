@@ -8,8 +8,14 @@ import 'package:menstrual_cycle_widget/utils/enumeration.dart';
 import 'package:women_health/controller/period_data_controller.dart';
 import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
+import 'package:women_health/views/screens/blog/blog_screen.dart';
+import 'package:women_health/views/screens/community/comment_screen.dart';
+import 'package:women_health/views/screens/community/community_screen.dart';
 import 'package:women_health/views/screens/edit_period/edit_period_screen.dart';
 import 'package:women_health/views/screens/home/components/menstrual_cycle.dart';
+import 'package:women_health/views/screens/marketplace/marketplace_screen.dart';
+import 'package:women_health/views/screens/mental_health_couns/meet_counsiler.dart';
+import 'package:women_health/views/screens/mental_health_couns/mental_health_counselor.dart';
 import 'package:women_health/views/screens/monthly/monthly_screen.dart';
 
 import 'components/home_card_widget.dart';
@@ -124,25 +130,33 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(
-                child: HomeCardWidget(
-                  iconPath: AppIcons.communityIcon,
-                  title: 'Community Forum',
-                  subTitle: 'Conversation & take control of your health',
-                  cardColor: Colors.blue.withOpacity(0.1),
-                  borderColor: AppTheme.blue,
-                  iconColor: AppTheme.blue,
+              InkWell(
+                onTap: () => Get.to(CommunityScreen(
+                  isBack: true,
+                )),
+                child: Expanded(
+                  child: HomeCardWidget(
+                    iconPath: AppIcons.communityIcon,
+                    title: 'Community Forum',
+                    subTitle: 'Conversation & take control of your health',
+                    cardColor: Colors.blue.withOpacity(0.1),
+                    borderColor: AppTheme.blue,
+                    iconColor: AppTheme.blue,
+                  ),
                 ),
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: HomeCardWidget(
-                  iconPath: AppIcons.shopIcon,
-                  title: 'Shopping',
-                  subTitle: 'From here now',
-                  cardColor: AppTheme.primaryColor.withOpacity(0.2),
-                  borderColor: AppTheme.primaryColor,
-                  iconColor: Colors.black,
+                child: InkWell(
+                  onTap: () => Get.to(MarketplaceScreen()),
+                  child: HomeCardWidget(
+                    iconPath: AppIcons.shopIcon,
+                    title: 'Shopping',
+                    subTitle: 'From here now',
+                    cardColor: AppTheme.primaryColor.withOpacity(0.2),
+                    borderColor: AppTheme.primaryColor,
+                    iconColor: Colors.black,
+                  ),
                 ),
               ),
             ],
@@ -151,13 +165,30 @@ class HomeScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: HomeCardWidget(
-                  iconPath: AppIcons.mentalHealthIcon,
-                  title: 'Mental Health Counselling',
-                  subTitle: 'Expert guidance for your well-being',
-                  cardColor: AppTheme.yelloward,
-                  borderColor: Colors.yellow,
-                  iconColor: Colors.yellow,
+                child: InkWell(
+                  onTap: () => Get.to(MentalHealthScreen()),
+                  child: HomeCardWidget(
+                    iconPath: AppIcons.mentalHealthIcon,
+                    title: 'Mental Health Counselling',
+                    subTitle: 'Expert guidance for your well-being',
+                    cardColor: AppTheme.yelloward,
+                    borderColor: Colors.yellow,
+                    iconColor: Colors.yellow,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: InkWell(
+                  onTap: () => Get.to(BlogScreen()),
+                  child: HomeCardWidget(
+                    iconPath: AppIcons.newsIcon,
+                    title: 'Blog',
+                    subTitle: 'Read our daily blog post',
+                    cardColor: AppTheme.greenCard,
+                    borderColor: Colors.green,
+                    iconColor: Colors.green,
+                  ),
                 ),
               ),
             ],

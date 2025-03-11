@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:women_health/controller/community_controller.dart';
+import 'package:women_health/views/screens/community/comment_screen.dart';
 
 class CommunityPostItem extends StatelessWidget {
-  const CommunityPostItem({super.key});
-
+  CommunityPostItem({super.key});
+  final communityController = Get.put(CommunityController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,8 +62,6 @@ class CommunityPostItem extends StatelessWidget {
                   color: Colors.red,
                 ),
               ),
-              SizedBox(width: 8.w),
-              const Icon(Icons.person_add_alt, color: Colors.black, size: 20),
             ],
           ),
 
@@ -127,10 +129,30 @@ class CommunityPostItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildAction(Icons.thumb_up_alt_outlined, 'Like'),
-              _buildAction(Icons.comment_outlined, 'Comment'),
-              _buildAction(Icons.share_outlined, 'Share'),
-              _buildAction(Icons.bookmark_outline, 'Save'),
+              Obx(() {
+                return InkWell(
+                    onTap: () {
+                      communityController.isLikedPost.value =
+                          !communityController.isLikedPost.value;
+                    },
+                    child: _buildAction(
+                        communityController.isLikedPost.value
+                            ? Icons.thumb_up_sharp
+                            : Icons.thumb_up_alt_outlined,
+                        'Support',
+                        communityController.isLikedPost.value
+                            ? Colors.blue
+                            : Colors.black));
+              }),
+              InkWell(
+                  onTap: () => Get.to(CommentScreen()),
+                  child: _buildAction(
+                      Icons.comment_outlined, 'Comment', Colors.black)),
+              InkWell(
+                  onTap: () {},
+                  child: _buildAction(
+                      Icons.share_outlined, 'Share', Colors.black)),
+              _buildAction(Icons.bookmark_outline, 'Save', Colors.black),
             ],
           ),
         ],
@@ -138,12 +160,12 @@ class CommunityPostItem extends StatelessWidget {
     );
   }
 
-  Widget _buildAction(IconData icon, String label) {
+  Widget _buildAction(IconData icon, String label, Color? selectedColor) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.black54),
+        Icon(icon, size: 20, color: selectedColor),
         SizedBox(width: 5.w),
-        Text(label, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+        Text(label, style: TextStyle(fontSize: 12.sp, color: selectedColor)),
       ],
     );
   }

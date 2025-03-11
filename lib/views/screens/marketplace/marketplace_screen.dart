@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/marketplace_controller.dart';
+import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/utils/helper/widget_helper.dart';
 import 'package:women_health/views/screens/marketplace/components/category_item.dart';
 import 'package:women_health/views/screens/marketplace/components/product_item.dart';
+import 'package:women_health/views/screens/marketplace/payment_screen.dart';
+import 'package:women_health/views/screens/marketplace/product_details_screen.dart';
 
 class MarketplaceScreen extends StatelessWidget {
   MarketplaceScreen({super.key});
@@ -15,10 +18,13 @@ class MarketplaceScreen extends StatelessWidget {
     return Scaffold(
       appBar: WidgetHelper.showAppBar(title: 'Marketplace', isBack: true),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Chose category',
+                style: AppTheme.titleMedium.copyWith(color: Colors.black)),
+            SizedBox(height: 5.h),
             Obx(() {
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -39,25 +45,30 @@ class MarketplaceScreen extends StatelessWidget {
                 ),
               );
             }),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Obx(() {
-                  return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.72,
-                    ),
-                    itemCount: marketplaceController.productCategories.length,
-                    itemBuilder: (context, index) {
-                      return ProductItem();
-                    },
-                  );
-                }),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    int crossAxisCount =
+                        (constraints.maxWidth ~/ 120).clamp(2, 4);
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 12.w,
+                        mainAxisSpacing: 12.h,
+                        childAspectRatio: 0.70,
+                      ),
+                      itemCount: 20,
+                      itemBuilder: (context, index) {
+                        return ProductItem(
+                          onTap: () => Get.to(ProductDetailsScreen()),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

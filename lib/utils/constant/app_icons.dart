@@ -20,4 +20,5 @@ class AppIcons {
   static String searchIcon = '$iconsPath/search_icon.svg';
   static String saveIcon = '$iconsPath/save_icon.svg';
   static String personIcon = '$iconsPath/person_icon.svg';
+  static String newsIcon = '$iconsPath/news.svg';
 }

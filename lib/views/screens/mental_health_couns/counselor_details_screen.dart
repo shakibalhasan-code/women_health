@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:heroicons/heroicons.dart';
 
 class CounselorDetailsScreen extends StatelessWidget {
@@ -27,7 +29,9 @@ class CounselorDetailsScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 16.w),
-            child: const Icon(Icons.close, color: Colors.black),
+            child: IconButton(
+                onPressed: () => Get.back(),
+                icon: Icon(Icons.close, color: Colors.black)),
           ),
         ],
       ),

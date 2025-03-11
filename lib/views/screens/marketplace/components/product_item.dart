@@ -4,7 +4,8 @@ import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/glob_widgets/my_glob_textButton.dart';
 
 class ProductItem extends StatelessWidget {
-  const ProductItem({super.key});
+  final VoidCallback onTap;
+  const ProductItem({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,23 @@ class ProductItem extends StatelessWidget {
             Text('Toyota',
                 style: AppTheme.titleSmall.copyWith(
                     color: Colors.black, fontWeight: FontWeight.bold)),
-            MyGlobTextbutton(buttonText: 'Buy Now', onTap: () {})
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '\$25,000',
+                  style: AppTheme.titleMedium.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
+                  ),
+                ),
+                // MyGlobTextbutton(buttonText: 'Buy Now', onTap: onTap),
+              ],
+            ),
+            SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(onPressed: onTap, child: Text('Buy Now')))
           ],
         ),
       ),

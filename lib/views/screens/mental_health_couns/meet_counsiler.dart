@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/counselor_controller.dart';
+import 'package:women_health/views/screens/mental_health_couns/counselor_details_screen.dart';
 
 class MeetCounselorScreen extends StatelessWidget {
   MeetCounselorScreen({super.key});
@@ -20,19 +21,13 @@ class MeetCounselorScreen extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          'Counselor',
+          'Health & Counselor',
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.w),
-            child: const Icon(Icons.close, color: Colors.black),
-          ),
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -60,24 +55,24 @@ class MeetCounselorScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
-            Center(
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-                  side: BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r)),
-                ),
-                child: Text(
-                  'More',
-                  style: TextStyle(fontSize: 16.sp, color: Colors.red),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.h),
+            // SizedBox(height: 20.h),
+            // Center(
+            //   child: OutlinedButton(
+            //     onPressed: () {},
+            //     style: OutlinedButton.styleFrom(
+            //       padding:
+            //           EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+            //       side: BorderSide(color: Colors.red),
+            //       shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(30.r)),
+            //     ),
+            //     child: Text(
+            //       'More',
+            //       style: TextStyle(fontSize: 16.sp, color: Colors.red),
+            //     ),
+            //   ),
+            // ),
+            // SizedBox(height: 20.h),
           ],
         ),
       ),
@@ -99,7 +94,7 @@ class MeetCounselorScreen extends StatelessWidget {
         style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
       ),
       trailing: OutlinedButton(
-        onPressed: () {},
+        onPressed: () => Get.to(CounselorDetailsScreen()),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
           side: BorderSide(color: Colors.grey.shade400),

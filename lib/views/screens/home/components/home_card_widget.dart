@@ -24,7 +24,7 @@ class HomeCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100.h,
+      height: 110.h,
       padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
         color: cardColor,
@@ -58,7 +58,7 @@ class HomeCardWidget extends StatelessWidget {
           Text(
             title,
             style: AppTheme.titleMedium.copyWith(
-                fontSize: 12.sp,
+                fontSize: 14.sp,
                 color: AppTheme.black400,
                 fontWeight: FontWeight.bold),
           ),

@@ -15,58 +15,66 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding:  EdgeInsets.symmetric(
-            horizontal: 15.w,
-            vertical: 15.h
-        ),
-        child: Column(
-          children: [
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+          child: Column(children: [
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Welcome',style: AppTheme.titleMedium.copyWith(color: AppTheme.secondColor)),
+                  Text('Welcome',
+                      style: AppTheme.titleMedium
+                          .copyWith(color: AppTheme.secondColor)),
                   SizedBox(height: 5.h),
-                  Text('SignUp',style: AppTheme.titleLarge.copyWith(color: AppTheme.primaryColor)),
+                  Text('SignUp',
+                      style: AppTheme.titleLarge
+                          .copyWith(color: AppTheme.primaryColor)),
                   SizedBox(height: 15.h),
-              
                   TextFormField(
                       decoration: InputDecoration(
-                        hintText: 'Email',
-                      )),
-                  SizedBox(height: 5.h,),
+                    hintText: 'Email',
+                  )),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Password',
-              
                     ),
-              
                   ),
-                  SizedBox(height: 5.h,),
+                  SizedBox(
+                    height: 5.h,
+                  ),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Re-password',
-              
                     ),
-              
                   ),
-                  SizedBox(height: 15.h,),
-                  MyButton(onTap: (){}, child: Text('Sign Up')),
-                  SizedBox(height: 10.h,),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  MyButton(onTap: () {}, child: Text('Sign Up')),
+                  SizedBox(
+                    height: 10.h,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(onPressed: ()=> Get.toNamed('/login'), child: Text('Already have a account ? Login Now',style: AppTheme.titleSmall.copyWith(color: AppTheme.primaryColor)))
-              
+                      TextButton(
+                          onPressed: () => Get.back(),
+                          child: Text('Already have a account ? Login Now',
+                              style: AppTheme.titleSmall
+                                  .copyWith(color: AppTheme.primaryColor)))
                     ],
                   )
                 ],
               ),
             ),
-            Text('or signUp with',style: AppTheme.titleSmall),
-            SizedBox(height: 8.h,),
+            Text('or signUp with', style: AppTheme.titleSmall),
+            SizedBox(
+              height: 8.h,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,9 +82,9 @@ class SignUpScreen extends StatelessWidget {
                 AuthIconWidget(iconPath: AppIcons.googleIcon),
                 SizedBox(width: 8.w),
                 AuthIconWidget(iconPath: AppIcons.fbIcon),
-              ],)
-          ])
-      ),
+              ],
+            )
+          ])),
     );
   }
 }

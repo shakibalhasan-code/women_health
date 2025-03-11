@@ -10,7 +10,7 @@ class InitialBinding extends Bindings {
   @override
   void dependencies() {
     // TODO: implement dependencies
-    Get.lazyPut(() => IntroController());
+    Get.lazyPut(() => QuestionnaireController());
     Get.lazyPut(() => MyTabController());
     Get.lazyPut(() => UserHelper());
     Get.lazyPut(() => PeriodDataController());

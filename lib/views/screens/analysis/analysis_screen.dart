@@ -23,47 +23,33 @@ class AnalysisScreen extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-              Text('Body Temperature'),
+              Text(
+                'Body Temperature',
+                style: TextStyle(
+                    backgroundColor: Colors.black, color: Colors.white),
+              ),
               MenstrualBodyTemperatureGraph(
                 bodyTemperatureUnits: BodyTemperatureUnits.celsius,
-                isShowMoreOptions: true,
-                onPdfDownloadCallback: (pdfPath) async {
-                  // This function will be called when the user downloads an pdf
-                  // pdfPath contains the path to the downloaded pdf
-                },
-                onImageDownloadCallback: (imagePath) async {
-                  // This function will be called when the user downloads an image
-                  // imagePath contains the path to the downloaded image
-                },
+                isShowMoreOptions: false,
               ),
               SizedBox(height: 8.h),
-              Text('Cycle Trends'),
+              Text(
+                'Cycle Trends',
+                style: TextStyle(
+                    backgroundColor: Colors.black, color: Colors.white),
+              ),
               MenstrualCycleTrendsGraph(
-                isShowMoreOptions: true,
-                onPdfDownloadCallback: (pdfPath) async {
-                  // This function will be called when the user downloads an pdf
-                  // pdfPath contains the path to the downloaded pdf
-                },
-                onImageDownloadCallback: (imagePath) async {
-                  // This function will be called when the user downloads an image
-                  // imagePath contains the path to the downloaded image
-                },
+                isShowMoreOptions: false,
               ),
               SizedBox(height: 8.h),
-              Text('Cycle Period'),
-              MenstrualCyclePeriodsGraph(
-                isShowMoreOptions: true,
-                onPdfDownloadCallback: (pdfPath) async {
-                  // This function will be called when the user downloads an pdf
-                  // pdfPath contains the path to the downloaded pdf
-                },
-                onImageDownloadCallback: (imagePath) async {
-                  // This function will be called when the user downloads an image
-                  // imagePath contains the path to the downloaded image
-                },
+              Text(
+                'Cycle Period',
+                style: TextStyle(
+                    backgroundColor: Colors.black, color: Colors.white),
               ),
-              Text('History'),
-              MenstrualCycleHistoryGraph()
+              MenstrualCyclePeriodsGraph(
+                isShowMoreOptions: false,
+              ),
             ],
           ),
         ),

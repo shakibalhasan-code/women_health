@@ -9,12 +9,7 @@ class WidgetHelper {
     return AppBar(
         title: Text(
           title,
-          style: AppTheme.titleLarge.copyWith(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w700,
-          ),
         ),
-        centerTitle: true,
         leading: isBack
             ? IconButton(
                 onPressed: () => Get.back(),

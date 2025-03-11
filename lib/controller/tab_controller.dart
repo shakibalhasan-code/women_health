@@ -14,7 +14,7 @@ class MyTabController extends GetxController {
     const MonthlyScreen(),
     CommunityScreen(),
     const AnalysisScreen(),
-    const ProfileScreen()
+    ProfileScreen()
   ].obs;
 
   void changeTab(int index) async {

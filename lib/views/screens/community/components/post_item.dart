@@ -106,19 +106,19 @@ class CommunityPostItem extends StatelessWidget {
                   height: 200.h,
                   fit: BoxFit.cover,
                 ),
-                Container(
-                  width: 50.w,
-                  height: 50.h,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.play_arrow,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
+                // Container(
+                //   width: 50.w,
+                //   height: 50.h,
+                //   decoration: BoxDecoration(
+                //     color: Colors.red,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: const Icon(
+                //     Icons.play_arrow,
+                //     color: Colors.white,
+                //     size: 30,
+                //   ),
+                // ),
               ],
             ),
           ),

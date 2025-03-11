@@ -158,6 +158,7 @@ class QuestionnaireScreen extends StatelessWidget {
                                 ),
                               ),
                       ),
+                      const Spacer(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: MyButton(

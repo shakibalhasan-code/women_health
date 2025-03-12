@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CommunityController extends GetxController {
+  late ImagePicker picker;
+  var selectedImage = Rxn<File>(); // Make it reactive
+
   var postCategory = [
     'All',
     'Period Care',
@@ -42,4 +49,16 @@ class CommunityController extends GetxController {
   ).obs;
 
   var isLikedPost = false.obs;
+
+  Future<void> getImage() async {
+    try {
+      picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        selectedImage.value = File(image.path);
+      }
+    } catch (e) {
+      print('$e');
+    }
+  }
 }

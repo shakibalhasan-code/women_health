@@ -5,8 +5,13 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/glob_widgets/my_button.dart';
 
+import '../../../controller/auth_controller.dart';
+
 class ForgetScreen extends StatelessWidget {
-  const ForgetScreen({super.key});
+  final AuthController authController = Get.put(AuthController());
+  final TextEditingController emailController = TextEditingController();
+
+  ForgetScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +33,33 @@ class ForgetScreen extends StatelessWidget {
           children: [
             Text('Reset Your Password',
                 style:
-                    AppTheme.titleLarge.copyWith(color: AppTheme.primaryColor)),
-            Text('We will send an OTP to you email address',
+                AppTheme.titleLarge.copyWith(color: AppTheme.primaryColor)),
+            Text('We will send an OTP to your email address',
                 style: AppTheme.titleSmall.copyWith(color: Colors.black)),
             SizedBox(height: 15.h),
             TextFormField(
-                decoration: InputDecoration(
-              hintText: 'Enter your email',
-            )),
-            SizedBox(height: 20.h),
-            MyButton(
-                onTap: () => Get.toNamed('/verify'), child: Text('Continue')),
-            SizedBox(
-              height: 10.h,
+              controller: emailController,
+              decoration: const InputDecoration(
+                hintText: 'Enter your email',
+              ),
             ),
+            SizedBox(height: 20.h),
+            Obx(() => ElevatedButton(onPressed: (){
+              if (emailController.text.isNotEmpty) {
+                authController.forgotPassword(emailController.text);
+              } else {
+                Get.snackbar(
+                  'Error',
+                  'Please enter your email',
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+              }
+            },
+              child: authController.isLoading.value
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Continue'),
+            )),
+            SizedBox(height: 10.h),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,

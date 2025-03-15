@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
-  final VoidCallback onTap;
+  final Function onTap;
   final Widget child;
   const MyButton({super.key, required this.onTap, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-          onPressed: onTap,
-          child: child
-      ),
+    return ElevatedButton(
+      onPressed: onTap != null
+          ? () async {
+        await onTap!();
+      }
+          : null,
+      child: child,
     );
   }
 }

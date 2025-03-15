@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
-          initialRoute: AppRoute.intro1,
+          initialRoute: AppRoute.splash,
           getPages: AppRoute.pages,
           theme: AppTheme.theme,
           initialBinding: InitialBinding(),

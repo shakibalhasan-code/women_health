@@ -5,6 +5,7 @@ import 'dart:convert';
 class QuestionnaireController extends GetxController {
   var currentStep = 1.obs;
   final int totalSteps = 10;
+  final String responsesKey = 'userResponses';// Add a key for storing responses
 
   @override
   void onInit() {
@@ -12,10 +13,14 @@ class QuestionnaireController extends GetxController {
     loadResponses(); // Load saved responses on initialization
   }
 
-  void loadResponses() async {
+  Future<void> loadResponses() async {
     Map<String, String> savedResponses = await getResponses();
     if (savedResponses.isNotEmpty) {
       selectedAnswers.addAll(savedResponses);
+      // Check if all questions are answered when loading
+      if (selectedAnswers.length == questions.length) {
+        print("All questions have been answered before.");
+      }
     }
   }
 
@@ -54,7 +59,7 @@ class QuestionnaireController extends GetxController {
     },
     {
       "question":
-          "Do you have any existing medical conditions related to your cycle?",
+      "Do you have any existing medical conditions related to your cycle?",
       "options": ["Yes", "No"],
     },
     {
@@ -92,17 +97,17 @@ class QuestionnaireController extends GetxController {
 
   void saveResponses() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("userResponses", jsonEncode(selectedAnswers));
-    print(prefs.getString('userResponses'));
+    prefs.setString(responsesKey, jsonEncode(selectedAnswers));
+    print(prefs.getString(responsesKey));
   }
 
   Future<Map<String, String>> getResponses() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString("userResponses");
+    String? jsonString = prefs.getString(responsesKey);
 
     if (jsonString != null) {
       Map<String, String> data =
-          Map<String, String>.from(jsonDecode(jsonString));
+      Map<String, String>.from(jsonDecode(jsonString));
       print(
           "✅Retrieved Responses: $data"); // ✅ Prints the stored answers correctly
       return data;

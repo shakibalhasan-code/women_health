@@ -1,6 +1,6 @@
-import 'package:get/get.dart';
-
-class ApiServices extends GetxService{
-
-
-}
+// import 'package:get/get.dart';
+//
+// class ApiServices extends GetxService{
+//
+//
+// }

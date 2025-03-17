@@ -3,20 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/auth_controller.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
-import 'package:women_health/utils/constant/route.dart';
+import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/views/screens/auth/forget_pass_screen.dart';
 import 'package:women_health/views/screens/auth/sign_up_screen.dart';
 import 'package:women_health/views/screens/auth/widgets/auth_icon_widget.dart';
 import 'package:women_health/views/screens/intro/questions_screen.dart';
-import 'package:women_health/utils/constant/app_icons.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
-  final AuthController _authController = Get.put(AuthController());
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final AuthController _authController = Get.find();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +72,23 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(height: 5.h),
                         TextFormField(
                           controller: _passwordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Password',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
@@ -113,7 +130,8 @@ class LoginScreen extends StatelessWidget {
                             _passwordController.text,
                           )
                               .then((_) async {
-                            if (await _authController.getTokenFromPrefs() !=
+                            if (await _authController
+                                .getTokenFromPrefs() !=
                                 null) {
                               Get.off(() => QuestionnaireScreen());
                             }
@@ -122,8 +140,9 @@ class LoginScreen extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
-                        padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h), // Adjust padding as needed
-                        textStyle: TextStyle(fontSize: 16.sp), // Adjust text style
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.w, vertical: 12.h),
+                        textStyle: TextStyle(fontSize: 16.sp),
                       ),
                       child: _authController.isLoading.value
                           ? const SizedBox(
@@ -133,7 +152,10 @@ class LoginScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                       )
-                          : const Text('Sign In',style: TextStyle(color: Colors.white),),
+                          : const Text(
+                        'Sign In',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                   SizedBox(height: 10.h),
@@ -171,9 +193,10 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // Clean up controllers when widget is disposed
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 }

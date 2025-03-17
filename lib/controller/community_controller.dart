@@ -19,27 +19,5 @@ class CommunityController extends GetxController {
     selectedCategory.value = category;
   }
 
-  var matchedUsers = <Map<String, String>>[
-    {'name': 'Happy', 'image': 'https://example.com/happy.jpg'},
-    {'name': 'Jolekha', 'image': 'https://example.com/jolekha.jpg'},
-    {'name': 'Akhi', 'image': 'https://example.com/akhi.jpg'},
-    {'name': 'Ema', 'image': 'https://example.com/ema.jpg'},
-  ].obs;
-
-  var followedUsers = <Map<String, String>>[
-    {'name': 'Happy', 'image': 'https://example.com/happy.jpg'},
-    {'name': 'Jolekha', 'image': 'https://example.com/jolekha.jpg'},
-    {'name': 'Akhi', 'image': 'https://example.com/akhi.jpg'},
-    {'name': 'Ema', 'image': 'https://example.com/ema.jpg'},
-  ].obs;
-
-  var allMatchedUsers = List.generate(
-    10,
-    (index) => {
-      'name': 'Elena Sheikh',
-      'image': 'https://example.com/elena.jpg',
-    },
-  ).obs;
-
   var isLikedPost = false.obs;
 }

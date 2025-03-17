@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,12 +16,22 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final AuthController _authController = Get.find(); // Ensure AuthController is initialized
+  final AuthController _authController = Get.find();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _rePasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureRePassword = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+    // Generate a random anonymous name when the screen is initialized
+    _nameController.text = 'Anonymous${Random().nextInt(9999)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +84,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(value)) {
                               return 'Please enter a valid email';
                             }
                             return null;
@@ -82,11 +94,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 5.h),
                         TextFormField(
                           controller: _passwordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Password',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
@@ -100,11 +124,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: 5.h),
                         TextFormField(
                           controller: _rePasswordController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Re-password',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureRePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureRePassword = !_obscureRePassword;
+                                });
+                              },
+                            ),
                           ),
-                          obscureText: true,
+                          obscureText: _obscureRePassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please re-enter your password';
@@ -134,7 +170,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
-                        padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 30.w, vertical: 12.h),
                         textStyle: TextStyle(fontSize: 16.sp),
                       ),
                       child: _authController.isLoading.value
@@ -145,10 +182,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: Colors.white,
                         ),
                       )
-                          : const Text('Sign Up',style: TextStyle(color: Colors.white),),
+                          : const Text(
+                        'Sign Up',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-
                   SizedBox(height: 10.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -158,7 +197,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: () => Get.back(),
                         child: Text(
                           'Already have an account ? Login Now',
-                          style: AppTheme.titleSmall.copyWith(color: AppTheme.primaryColor),
+                          style: AppTheme.titleSmall
+                              .copyWith(color: AppTheme.primaryColor),
                         ),
                       )
                     ],

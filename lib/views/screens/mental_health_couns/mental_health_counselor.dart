@@ -5,6 +5,17 @@ import 'package:women_health/controller/mental_health_controller.dart';
 import 'package:women_health/views/screens/mental_health_couns/meet_counsiler.dart';
 import 'package:women_health/views/screens/mental_health_couns/post_details.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:women_health/controller/mental_health_controller.dart';
+import 'package:women_health/views/screens/mental_health_couns/meet_counsiler.dart';
+import 'package:women_health/views/screens/mental_health_couns/post_details.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../../../core/models/blog_model.dart';
+
 class MentalHealthScreen extends StatelessWidget {
   MentalHealthScreen({super.key});
   final MentalHealthController controller = Get.put(MentalHealthController());
@@ -15,8 +26,6 @@ class MentalHealthScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            // Icon(Icons.volunteer_activism, color: Colors.red),
-            // SizedBox(width: 8.w),
             Text("Mental Health Counseling",
                 style: TextStyle(fontWeight: FontWeight.bold)),
           ],
@@ -63,7 +72,7 @@ class MentalHealthScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 10.h),
             Obx(
-              () => SingleChildScrollView(
+                  () => SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: controller.categories.map((category) {
@@ -91,13 +100,22 @@ class MentalHealthScreen extends StatelessWidget {
             ),
             SizedBox(height: 15.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return _blogPostCard(
-                      onTap: () => Get.to(BlogPostDetailsScreen()));
-                },
-              ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return ListView.builder(
+                    itemCount: controller.getFilteredPosts().length,
+                    itemBuilder: (context, index) {
+                      final post = controller.getFilteredPosts()[index];
+                      return _blogPostCard(
+                        post: post, // Pass the post data
+                        onTap: () => Get.to(BlogPostDetailsScreen(post: post)), // Pass the post to details screen
+                      );
+                    },
+                  );
+                }
+              }),
             ),
           ],
         ),
@@ -105,20 +123,20 @@ class MentalHealthScreen extends StatelessWidget {
     );
   }
 
-  Widget _blogPostCard({required VoidCallback onTap}) {
+  Widget _blogPostCard({required VoidCallback onTap, required BlogPostModel post}) {
     return InkWell(
       onTap: onTap,
       child: Card(
         margin: EdgeInsets.only(bottom: 12.h),
         shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(10.r)),
               child: Image.network(
-                'https://media.istockphoto.com/id/1513072392/photo/hands-holding-paper-head-human-brain-with-flowers-self-care-and-mental-health-concept.jpg?s=612x612&w=0&k=20&c=CCzxREX01-dEqN3P_1M1ZrsZeenCxTmDWbp-goLwjMc=',
+                post.imageUrl ?? 'https://via.placeholder.com/400x200', // Display from the model
                 width: double.infinity,
                 height: 150.h,
                 fit: BoxFit.cover,
@@ -130,28 +148,26 @@ class MentalHealthScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "How to Manage Anxiety in Daily Life",
+                    post.title ?? "No Title", // Display from the model
                     style:
-                        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    "Meditation is a powerful tool for stress relief and emotional balance. Learn how to incorporate meditation into your daily routine to achieve mental clarity and relaxation.",
+                    post.description ?? "No Description", // Display from the model
                     style: TextStyle(fontSize: 14.sp, color: Colors.black87),
                   ),
                   SizedBox(height: 10.h),
                   Divider(),
                   SizedBox(height: 8.h),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("🧘 Find a quiet space for meditation"),
-                      Text("🌬️ Focus on deep breathing exercises"),
-                      Text("🌀 Let go of distractions and negative thoughts"),
-                      Text("⏳ Be consistent for best long-term results"),
-                    ],
+                  // This needs to be adjusted because descriptions are too big to fit here, can you truncate by 100 character
+                  Text(
+                    (post.description != null && post.description!.length > 100)
+                        ? post.description!.substring(0, 100) + '...'
+                        : post.description ?? "",
+                    style: TextStyle(fontSize: 14.sp, color: Colors.black87),
                   ),
-                  SizedBox(height: 10.h),
+
                 ],
               ),
             ),

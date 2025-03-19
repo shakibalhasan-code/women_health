@@ -7,6 +7,8 @@ import 'package:women_health/views/screens/auth/set_pass_screen.dart';
 import 'package:women_health/views/screens/auth/verify_email_otp_screen.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
 
+import '../views/screens/home/home_screen.dart';
+
 class AuthController extends GetxController {
   var isLoading = false.obs;
   final String userIdKey = 'user_id'; // Key for storing user ID in SharedPreferences
@@ -63,7 +65,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Login user
+// Login user
   Future<void> loginUser(String email, String password) async {
     try {
       isLoading(true);
@@ -82,15 +84,18 @@ class AuthController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // Save email to SharedPreferences
-        await _saveEmailToPrefs(email);
 
         // Save the token
-        await _saveTokenToPrefs(data['token']);
+        final token = data['token'];  // Get token from response
+        await _saveTokenToPrefs(token); // Save the token
 
         // Save the user ID
         final userId = data['user']['_id']; // Assuming your API returns the user ID in this format
         await _saveUserIdToPrefs(userId); // Save the user ID to SharedPreferences
+
+        // Save email to SharedPreferences
+        await _saveEmailToPrefs(email);
+
 
         Get.snackbar(
           'Success',
@@ -99,7 +104,7 @@ class AuthController extends GetxController {
           duration: const Duration(seconds: 2),
         );
         // Navigate to home screen
-        // Get.offAll(() => HomeScreen());
+        Get.offAll(() => HomeScreen());
       } else {
         Get.snackbar(
           'Error',
@@ -118,6 +123,26 @@ class AuthController extends GetxController {
       isLoading(false);
       debugPrint('Login process finished');
     }
+  }
+
+  // Helper function to save the token to SharedPreferences
+  Future<void> _saveTokenToPrefs(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);  // Use 'token' as the key
+    debugPrint('Token saved to SharedPreferences: $token');
+  }
+
+  // Helper function to save the email to SharedPreferences
+  Future<void> _saveEmailToPrefs(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    debugPrint('Email saved to SharedPreferences: $email');
+  }
+  // Helper function to save the userId to SharedPreferences
+  Future<void> _saveUserIdToPrefs(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+    debugPrint('userId saved to SharedPreferences: $userId');
   }
 
   // Forgot Password
@@ -263,17 +288,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Save email to SharedPreferences
-  Future<void> _saveEmailToPrefs(String email) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_email', email);
-  }
 
-  // Save token to SharedPreferences
-  Future<void> _saveTokenToPrefs(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', token);
-  }
 
   // Get email from SharedPreferences
   Future<String?> getEmailFromPrefs() async {
@@ -284,15 +299,9 @@ class AuthController extends GetxController {
   // Get token from SharedPreferences
   Future<String?> getTokenFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
+    return prefs.getString('token');
   }
 
-  // Save User ID to SharedPreferences
-  Future<void> _saveUserIdToPrefs(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(userIdKey, userId);
-    debugPrint('Saved User ID: $userId');
-  }
 
   // Get User ID from SharedPreferences
   Future<String?> getUserIdFromPrefs() async {

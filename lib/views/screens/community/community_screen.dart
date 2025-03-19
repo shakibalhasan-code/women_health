@@ -2,75 +2,76 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:heroicons/heroicons.dart';
 import 'package:women_health/controller/community_controller.dart';
-import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/utils/constant/route.dart';
-import 'package:women_health/views/glob_widgets/my_button.dart';
 import 'package:women_health/views/screens/community/components/post_category_item.dart';
-import 'package:women_health/views/screens/community/components/post_item.dart';
-import 'package:women_health/views/screens/community/matched_following_screen.dart';
-import 'package:women_health/views/screens/community/saved_post.dart';
 import 'package:women_health/views/screens/community/search_screen.dart';
-
-import '../../../utils/helper/widget_helper.dart';
+import 'components/post_item.dart';
+import 'saved_post.dart';
 
 class CommunityScreen extends StatelessWidget {
   final bool? isBack;
+
   CommunityScreen({super.key, this.isBack});
 
-  final comunityController = Get.find<CommunityController>();
+  final communityController = Get.find<CommunityController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: isBack == true ? AppBar() : null,
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              header_section(context),
-              post_section(),
-              SizedBox(height: 8.h),
-              Obx(() {
-                return SingleChildScrollView(
+      appBar: isBack == true ? AppBar() : null,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Obx(() {
+          if (communityController.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                headerSection(context),
+                postSection(),
+                SizedBox(height: 8.h),
+                SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(
-                        comunityController.postCategory.length, (index) {
-                      final category = comunityController.postCategory[index];
-                      return GestureDetector(
-                        onTap: () {
-                          comunityController.setSelectedCategory(category);
-                        },
-                        child: PostCategoryItem(
-                          isSelected:
-                              comunityController.selectedCategory.value ==
-                                  category,
-                          text: category,
-                        ),
-                      );
-                    }),
+                      communityController.postCategory.length,
+                          (index) {
+                        final category = communityController.postCategory[index];
+                        return GestureDetector(
+                          onTap: () {
+                            communityController.setSelectedCategory(category);
+                          },
+                          child: PostCategoryItem(
+                            isSelected: communityController.selectedCategory.value == category,
+                            text: category,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                );
-              }),
-              SizedBox(height: 8.h),
-              Expanded(
+                ),
+                SizedBox(height: 8.h),
+                Expanded(
                   child: ListView.builder(
-                      itemCount: 12,
-                      itemBuilder: (context, index) {
-                        return CommunityPostItem();
-                      }))
-            ],
-          ),
-        ));
+                    itemCount: communityController.posts.length,
+                    itemBuilder: (context, index) {
+                      return CommunityPostItem(post: communityController.posts[index]); // Pass the post
+                    },
+                  ),
+                ),
+              ],
+            );
+          }
+        }),
+      ),
+    );
   }
 
-  Widget post_section() {
+  Widget postSection() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Column(
@@ -88,7 +89,7 @@ class CommunityScreen extends StatelessWidget {
               width: double.infinity,
               child: TextField(
                 enabled: false,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Write here',
                 ),
               ),
@@ -99,7 +100,7 @@ class CommunityScreen extends StatelessWidget {
     );
   }
 
-  Widget header_section(BuildContext context) {
+  Widget headerSection(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: SizedBox(
@@ -112,18 +113,18 @@ class CommunityScreen extends StatelessWidget {
               child: Container(
                 width: 150.w,
                 decoration: BoxDecoration(
-                    color: Color(0xffF4F4F4),
+                    color: const Color(0xffF4F4F4),
                     borderRadius: BorderRadius.circular(20.r)),
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                  EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                   child: Row(
                     children: [
-                      Icon(Icons.search_rounded, color: Colors.black),
+                      const Icon(Icons.search_rounded, color: Colors.black),
                       SizedBox(width: 5.w),
                       Text('Search',
                           style:
-                              AppTheme.titleSmall.copyWith(color: Colors.black))
+                          AppTheme.titleSmall.copyWith(color: Colors.black))
                     ],
                   ),
                 ),
@@ -142,13 +143,6 @@ class CommunityScreen extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            // InkWell(
-            //   onTap: () => Get.to(MatchFollowingScreen()),
-            //   child: SvgPicture.asset(
-            //     AppIcons.personIcon,
-            //     color: Colors.black,
-            //   ),
-            // )
           ],
         ),
       ),

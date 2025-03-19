@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:women_health/controller/community_controller.dart';
 
 class CommentScreen extends StatelessWidget {
-  const CommentScreen({super.key});
-
+  final List<dynamic> comments;
+  final String postId;
+   CommentScreen({super.key, required this.comments, required this.postId});
+   final communityController = Get.find<CommunityController>();
+   final commentController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +24,7 @@ class CommentScreen extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.all(16.w),
-              itemCount: 10, // Example count
+              itemCount: comments.length, // Example count
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -37,13 +43,13 @@ class CommentScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "User ${index + 1}",
+                              'Unknown User',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14.sp),
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              "This is a sample comment. It can be multiple lines and should wrap correctly.",
+                              comments[index]['commentText'],
                               style: TextStyle(
                                   fontSize: 14.sp, color: Colors.black87),
                             ),
@@ -63,6 +69,7 @@ class CommentScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: commentController,
                     decoration: InputDecoration(
                       hintText: "Write a comment...",
                       filled: true,
@@ -77,10 +84,17 @@ class CommentScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10.w),
-                CircleAvatar(
-                  radius: 22.r,
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.send, color: Colors.white, size: 20.sp),
+                InkWell(
+                  onTap:()async{
+                    // if(commentController.text.isNotEmpty){
+                    //   await communityController.addComment(postId,commentController.text);
+                    // }
+                  },
+                  child: CircleAvatar(
+                    radius: 22.r,
+                    backgroundColor: Colors.blue,
+                    child: Icon(Icons.send, color: Colors.white, size: 20.sp),
+                  ),
                 ),
               ],
             ),

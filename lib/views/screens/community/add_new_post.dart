@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,7 @@ import 'package:women_health/views/screens/marketplace/components/category_item.
 class CreatePostScreen extends StatelessWidget {
   CreatePostScreen({super.key});
 
-  final communityController = Get.put(CommunityController());
+  final communityController = Get.find<CommunityController>(); // Find, not Put
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class CreatePostScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: Obx(() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,29 +53,24 @@ class CreatePostScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.h),
-            Obx(() {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  spacing: 8.w,
-                  children: communityController.postCategory.map((category) {
-                    return GestureDetector(
-                        onTap: () {
-                          communityController.setSelectedCategory(category);
-                        },
-                        child: CategoryItem(
-                            categoryName: category,
-                            isSelected:
-                                communityController.selectedCategory.value ==
-                                    category,
-                            onTap: () {
-                              communityController.selectedCategory.value =
-                                  category;
-                            }));
-                  }).toList(),
-                ),
-              );
-            }),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 8.w,
+                children: communityController.postCategory.map((category) {
+                  return GestureDetector(
+                      onTap: () {
+                        communityController.setSelectedCategory(category);
+                      },
+                      child: CategoryItem(
+                          categoryName: category,
+                          isSelected: communityController.selectedCategory.value == category,
+                          onTap: () {
+                            communityController.selectedCategory.value = category;
+                          }));
+                }).toList(),
+              ),
+            ),
             SizedBox(height: 20.h),
             Text(
               'Title',
@@ -85,7 +81,8 @@ class CreatePostScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 5.h),
-            const TextField(
+            TextField(
+              controller: communityController.titleController.value, // Use GetX controller
               decoration: InputDecoration(
                 hintText: 'Write here',
               ),
@@ -100,36 +97,59 @@ class CreatePostScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 5.h),
-            const TextField(
+            TextField(
+              controller: communityController.descriptionController.value, // Use GetX controller
               decoration: InputDecoration(
                 hintText: 'Write here',
               ),
               maxLines: 3,
             ),
             SizedBox(height: 15.h),
-            Row(
-              children: [
-                const Icon(Icons.camera_alt_outlined, color: Colors.black),
-                SizedBox(width: 5.w),
-                Text(
-                  'Add photo',
-                  style: TextStyle(fontSize: 14.sp, color: Colors.black),
-                ),
-              ],
+            GestureDetector(
+              onTap: () {
+                communityController.pickImage();
+              },
+              child: Row(
+                children: [
+                  const Icon(Icons.camera_alt_outlined, color: Colors.black),
+                  SizedBox(width: 5.w),
+                  Text(
+                    'Add photo',
+                    style: TextStyle(fontSize: 14.sp, color: Colors.black),
+                  ),
+                  SizedBox(width: 10.w),
+                  if (communityController.selectedImage.value != null)
+                    Text(
+                      'Image Selected',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.green),
+                    ),
+                ],
+              ),
             ),
+            SizedBox(height: 10.h),
+            if (communityController.selectedImage.value != null)
+              Image.file(
+                File(communityController.selectedImage.value!.path),
+                height: 100.h,
+                width: 100.w,
+                fit: BoxFit.cover,
+              ),
             SizedBox(height: 30.h),
             Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  communityController.writePost();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.r),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 50.w, vertical: 15.h),
+                  padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 15.h),
                 ),
-                child: Text(
+                child: communityController.isLoading.value
+                    ? CircularProgressIndicator(color: Colors.white) // Show loader
+                    : Text(
                   'Post now',
                   style: TextStyle(fontSize: 16.sp, color: Colors.white),
                 ),
@@ -137,7 +157,7 @@ class CreatePostScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

@@ -10,5 +10,12 @@ class ApiEndpoints {
   static String  resetPass = '$baseUrl/reset-password';
   static String  verify = '$baseUrl/verify-otp';
 
+  static String  allPost = '$baseUrl/post';
+
+  static String  blogPost = '$baseUrl/admin/post/get';
+  static String  createPost = '$baseUrl/post';
+  static String  allMentalPost = '$baseUrl/admin/mental';
+
+
 
 }

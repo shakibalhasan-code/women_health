@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/models/blog_model.dart';
+
 class BlogPostDetailsScreen extends StatelessWidget {
-  const BlogPostDetailsScreen({super.key});
+  final BlogPostModel post; // Take a BlogPostModel as input
+
+  const BlogPostDetailsScreen({Key? key, required this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +36,23 @@ class BlogPostDetailsScreen extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
                 child: Image.network(
-                  'https://media.istockphoto.com/id/1513072392/photo/hands-holding-paper-head-human-brain-with-flowers-self-care-and-mental-health-concept.jpg?s=612x612&w=0&k=20&c=CCzxREX01-dEqN3P_1M1ZrsZeenCxTmDWbp-goLwjMc=',
+                  post.imageUrl ?? 'https://via.placeholder.com/400x200', // Use post.imageUrl
                   width: double.infinity,
                   height: 250.h,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Handle image loading errors
+                    return Container(
+                      height: 250.h,
+                      color: Colors.grey.shade200,
+                      child: Center(child: Icon(Icons.error_outline)),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 16.h),
               Text(
-                "How to Manage Anxiety in Daily Life",
+                post.title ?? "No Title", // Use post.title
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -48,12 +60,7 @@ class BlogPostDetailsScreen extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               Text(
-                "Meditation is a powerful tool for stress relief and emotional balance. Learn how to incorporate meditation into your daily routine to achieve mental clarity and relaxation.\n\n"
-                "🧘 Find a quiet space for meditation\n"
-                "🌬️ Focus on deep breathing exercises\n"
-                "🌀 Let go of distractions and negative thoughts\n"
-                "⏳ Be consistent for best long-term results\n\n"
-                "Taking time to center yourself and practice mindfulness can significantly improve your mental well-being. Whether it's through deep breathing, visualization, or relaxation techniques, small daily efforts can have a profound impact on managing anxiety and stress levels.",
+                post.description ?? "No Description", // Use post.description
                 style: TextStyle(fontSize: 14.sp, color: Colors.black87),
               ),
             ],

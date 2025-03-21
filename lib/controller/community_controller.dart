@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:mime_type/mime_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -10,6 +10,7 @@ import 'package:women_health/utils/constant/api_endpoints.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart'; // For MediaType
 import '../core/models/community_post_model.dart';
+import 'package:mime_type/mime_type.dart';
 
 class CommunityController extends GetxController {
   var postCategory = [
@@ -134,7 +135,7 @@ class CommunityController extends GetxController {
       request.headers['Authorization'] = 'Bearer $token'; // Add token to header
       request.fields['title'] = titleController.value.text;
       request.fields['description'] = descriptionController.value.text;
-      request.fields['categoryName'] = categoryName;
+      request.fields['category'] = categoryName;
 
       // Add the image file
       var imageFile = File(selectedImage.value!.path);
@@ -230,20 +231,42 @@ class CommunityController extends GetxController {
     }
   }
 
-
-//Helper function to toggle the liked post
-/*void toggleLike(CommunityPostModel post) {
-    final index = posts.indexOf(post);
-    if (index != -1) {
-      final isLiked = post.likes?.any((like) => like.id == 'userId'); // Replace 'userId' with the actual user ID if available
-      if (isLiked != null && isLiked) {
-        // Unlike the post
-        post.likes?.removeWhere((like) => like.id == 'userId'); // Replace 'userId' with the actual user ID if available
-      } else {
-        // Like the post
-        post.likes?.add(User(id: 'userId', name: 'userName', email: 'userEmail')); // Replace with actual user data
-      }
-      posts.refresh(); // Trigger UI update
+  Future<void> createPost({
+    required String title,
+    required String description,
+    required File image,
+  }) async {
+    final String apiUrl = ApiEndpoints.createPost; // Replace with your API URL
+    final token = prefs?.getString('token');
+    print(token);
+    if (token == null) {
+      print('No token found in shared preferences');
+      isLoading(false);
+      Get.snackbar('Error', 'Please Login First',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
     }
-  }*/
+
+    var request = http.MultipartRequest("POST", Uri.parse(apiUrl))
+      ..headers['Authorization'] = 'Bearer $token'
+      ..fields['title'] = title
+      ..fields['category'] = selectedCategory.value
+      ..fields['description'] = description
+      ..files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path
+
+      ));
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 201) {
+        print("Post created successfully!");
+      } else {
+        print("Failed to create post: ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
 }

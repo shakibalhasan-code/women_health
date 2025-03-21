@@ -1,11 +1,14 @@
+// meet_counselor_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/counselor_controller.dart';
+import 'package:women_health/utils/constant/api_endpoints.dart';
 import 'package:women_health/views/screens/mental_health_couns/counselor_details_screen.dart';
+import 'package:women_health/core/models/counselor_model.dart'; // Import Counselor model
 
 class MeetCounselorScreen extends StatelessWidget {
-  MeetCounselorScreen({super.key});
+  MeetCounselorScreen({Key? key}) : super(key: key); // Use Key? key
 
   final counselorController = Get.put(CounselorController());
 
@@ -44,57 +47,52 @@ class MeetCounselorScreen extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             Expanded(
-              child: Obx(
-                () => ListView.separated(
-                  itemCount: counselorController.counselors.length,
-                  separatorBuilder: (context, index) => Divider(),
-                  itemBuilder: (context, index) {
-                    final counselor = counselorController.counselors[index];
-                    return _buildCounselorItem(counselor);
-                  },
-                ),
-              ),
+              child: Obx(() {
+                if (counselorController.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return ListView.separated(
+                    itemCount: counselorController.counselors.length,
+                    separatorBuilder: (context, index) => Divider(),
+                    itemBuilder: (context, index) {
+                      final counselor = counselorController.counselors[index];
+                      return _buildCounselorItem(counselor);
+                    },
+                  );
+                }
+              }),
             ),
-            // SizedBox(height: 20.h),
-            // Center(
-            //   child: OutlinedButton(
-            //     onPressed: () {},
-            //     style: OutlinedButton.styleFrom(
-            //       padding:
-            //           EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-            //       side: BorderSide(color: Colors.red),
-            //       shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(30.r)),
-            //     ),
-            //     child: Text(
-            //       'More',
-            //       style: TextStyle(fontSize: 16.sp, color: Colors.red),
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(height: 20.h),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCounselorItem(Map<String, String> counselor) {
+  Widget _buildCounselorItem(Counselor counselor) {
+    String baseUrl = ApiEndpoints.baseUrl;
+    String fullImageUrl = counselor.image.isNotEmpty
+        ? '$baseUrl/${counselor.image}'
+        : 'https://via.placeholder.com/150';
+
+    // Use the Counselor model
     return ListTile(
       leading: CircleAvatar(
         radius: 25.r,
-        backgroundImage: NetworkImage(counselor['image']!),
+        backgroundImage: NetworkImage(fullImageUrl), // Access image directly
+        onBackgroundImageError: (exception, stackTrace) {
+          print('Error loading image for ${counselor.name}: $exception');
+        },
       ),
       title: Text(
-        counselor['name']!,
+        counselor.name, // Access name directly
         style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
-        'Specialization: ${counselor['specialization']}',
+        'Experience: ${counselor.experience} years', // Access experience
         style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
       ),
       trailing: OutlinedButton(
-        onPressed: () => Get.to(CounselorDetailsScreen()),
+        onPressed: () => Get.to(CounselorDetailsScreen(counselor: counselor)),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
           side: BorderSide(color: Colors.grey.shade400),

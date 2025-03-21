@@ -1,11 +1,14 @@
+// counselor_details_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:heroicons/heroicons.dart';
+import 'package:women_health/core/models/counselor_model.dart'; // Import the Counselor model
 
 class CounselorDetailsScreen extends StatelessWidget {
-  const CounselorDetailsScreen({super.key});
+  final Counselor counselor;
+
+  const CounselorDetailsScreen({Key? key, required this.counselor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +48,18 @@ class CounselorDetailsScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 30.r,
                   backgroundImage:
-                      NetworkImage('https://example.com/counselor.jpg'),
+                      NetworkImage(counselor.image), // Use Counselor's image
+                  onBackgroundImageError: (exception, stackTrace) {
+                    print(
+                        'Error loading image for ${counselor.name}: $exception');
+                  },
                 ),
                 SizedBox(width: 10.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dr. Rahat Karim',
+                      counselor.name, // Use Counselor's name
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -60,7 +67,7 @@ class CounselorDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Relationship & Marriage Therapy',
+                      counselor.education, // Use Counselor's education
                       style: TextStyle(
                           fontSize: 14.sp, color: Colors.grey.shade600),
                     ),
@@ -76,24 +83,27 @@ class CounselorDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Text(
-                '"Dr. Ayesha Rahman is a certified clinical psychologist with over 8 years of experience in anxiety and stress management. She specializes in cognitive behavioral therapy (CBT) and mindfulness techniques to help individuals overcome emotional challenges. Her approach focuses on personalized care, ensuring clients feel heard, supported, and empowered. Dr. Ayesha has successfully guided hundreds of patients toward a healthier, more balanced life."',
+                counselor.bio, // Use Counselor's bio
                 style: TextStyle(fontSize: 14.sp, color: Colors.black),
               ),
             ),
             SizedBox(height: 20.h),
-            _buildDetailRow(Icons.location_on, 'Location', 'Dhaka'),
-            _buildDetailRow(Icons.business_center, 'Experience', '6 Year +'),
-            _buildDetailRow(
-                Icons.language, 'Language spoken', 'Bangla / English'),
-            _buildDetailRow(
-                Icons.calendar_today, 'Availability', 'Monday to Friday'),
-            _buildDetailRow(Icons.access_time, 'Time', '10 AM - 5 PM'),
+            _buildDetailRow(Icons.location_on, 'Location',
+                counselor.location ?? 'N/A'), // Use location
+            _buildDetailRow(Icons.business_center, 'Experience',
+                '${counselor.experience} Year +'), // Use experience
+            _buildDetailRow(Icons.language, 'Email', counselor.email), //email
+            _buildDetailRow(Icons.calendar_today, 'Availability',
+                counselor.availability.join(', ')), //availability
+            _buildDetailRow(Icons.access_time, 'Phone', counselor.phone),
             SizedBox(height: 30.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Implement email functionality here
+                  },
                   style: OutlinedButton.styleFrom(
                     padding:
                         EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
@@ -107,7 +117,9 @@ class CounselorDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Implement call functionality here
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(

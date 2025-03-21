@@ -36,23 +36,31 @@ class CommunityPostModel {
     id = json['_id'];
     userId = json['userId'] != null ? User.fromJson(json['userId']) : null;
     title = json['title'];
-    category = json['category'];
+
+    // 🔥 Fix this line
+    category = json['category'] is Map<String, dynamic>
+        ? json['category']['name']
+        : json['category'];
+
     description = json['description'];
     image = json['image'];
 
-    likes.clear(); // Clear previous list before adding new items
+    likes.clear();
     if (json['likes'] != null) {
-      (json['likes'] as List).forEach((v) {  // Correct List type
+      (json['likes'] as List).forEach((v) {
         likes.add(User.fromJson(v));
       });
     }
 
     comments = json['comments'] ?? [];
     followers = json['followers'] ?? [];
-    createdAt = json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
-    updatedAt = json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null;
+    createdAt =
+        json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
+    updatedAt =
+        json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null;
     v = json['__v'];
   }
+
   int get totalLikes => likes.length;
   int get totalComments => comments?.length ?? 0;
 
@@ -66,7 +74,9 @@ class CommunityPostModel {
     data['category'] = category;
     data['description'] = description;
     data['image'] = image;
-    data['likes'] = likes.map((v) => v.toJson()).toList(); // Convert RxList<User> to normal list
+    data['likes'] = likes
+        .map((v) => v.toJson())
+        .toList(); // Convert RxList<User> to normal list
     data['createdAt'] = createdAt?.toIso8601String();
     data['updatedAt'] = updatedAt?.toIso8601String();
     data['__v'] = v;

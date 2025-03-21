@@ -9,8 +9,8 @@ import '../core/models/blog_model.dart';
 
 // Controller
 class BlogController extends GetxController {
-  RxList<String> categories = <String>[].obs;
-  RxString selectedCategory = ''.obs;
+  RxList<String> categories = <String>["All"].obs;
+  RxString selectedCategory = "All".obs;
   RxList<BlogPostModel> blogPosts = <BlogPostModel>[].obs;
   RxBool isLoading = true.obs;
 
@@ -20,47 +20,56 @@ class BlogController extends GetxController {
   void onInit() {
     super.onInit();
     initializeSharedPreferences();
-    fetchBlogData();
   }
 
   Future<void> initializeSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
+    await fetchAllCategories(); // 1. Fetch categories
+    await fetchBlogData(); // 2. Then fetch blog data
   }
 
+  // 🟢 1. Fetching all categories (from secured endpoint)
+  Future<void> fetchAllCategories() async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('Token not found');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(ApiEndpoints.allCategory),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final List<dynamic> fetched = jsonData['categories'];
+
+        final List<String> names =
+            fetched.map((e) => e['name'].toString()).toList();
+        categories.addAll(names); // starts with "All", then adds API names
+
+        print("Categories: $categories");
+      } else {
+        print('Failed to load categories: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error loading categories: $e');
+    }
+  }
+
+  // 🟢 2. Blog posts fetching (No token needed if public)
   Future<void> fetchBlogData() async {
     try {
       isLoading(true);
 
-      final token = prefs?.getString('token');
-
-      if (token == null) {
-        print('No token found in shared preferences');
-        isLoading(false);
-        return;
-      }
-      print(token);
-
-      final response = await http.get(
-        Uri.parse(ApiEndpoints.blogPost),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-
+      final response = await http.get(Uri.parse(ApiEndpoints.blogPost));
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        blogPosts.value = jsonResponse.map((item) => BlogPostModel.fromJson(item)).toList();
+        final jsonData = json.decode(response.body);
+        final List<dynamic> postList = jsonData['posts'];
 
-        Set<String> uniqueCategories = {};
-        for (var post in blogPosts) {
-          if (post.category != null && post.category!.name != null) {
-            uniqueCategories.add(post.category!.name!);
-          }
-        }
-        categories.value = uniqueCategories.toList();
-        if (categories.isNotEmpty) {
-          selectedCategory.value = categories.first;
-        }
+        blogPosts.value =
+            postList.map((item) => BlogPostModel.fromJson(item)).toList();
       } else {
         print('Failed to fetch blog posts: ${response.statusCode}');
       }
@@ -76,10 +85,12 @@ class BlogController extends GetxController {
   }
 
   List<BlogPostModel> getFilteredPosts() {
-    if (selectedCategory.value.isEmpty) {
+    if (selectedCategory.value == "All") {
       return blogPosts;
     } else {
-      return blogPosts.where((post) => post.category?.name == selectedCategory.value).toList();
+      return blogPosts
+          .where((post) => post.category?.name == selectedCategory.value)
+          .toList();
     }
   }
 }

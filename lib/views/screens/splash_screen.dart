@@ -13,7 +13,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final AuthController authController = Get.find();
-  final QuestionnaireController questionnaireController = Get.find(); // Get QuestionnaireController
+  final QuestionnaireController questionnaireController =
+      Get.find(); // Get QuestionnaireController
 
   @override
   void initState() {
@@ -24,15 +25,16 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAppStatus() async {
     await Future.delayed(Duration(seconds: 2)); // Simulate loading time
 
-    final userId = await authController.getUserIdFromPrefs();
+    final token = await authController.getTokenFromPrefs();
 
-    if (userId != null) {
-      // User is logged in
+    if (token != null && token.isNotEmpty) {
+      // User has a token, assume they are logged in
 
       await questionnaireController.loadResponses(); // Load saved responses
 
-      bool allQuestionsAnswered = questionnaireController.questions.every((question) =>
-          questionnaireController.selectedAnswers.containsKey(question['question']));
+      bool allQuestionsAnswered = questionnaireController.questions.every(
+          (question) => questionnaireController.selectedAnswers
+              .containsKey(question['question']));
 
       if (allQuestionsAnswered) {
         // Questions have been answered, navigate to TabScreen
@@ -41,9 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
         // Questions haven't been answered, navigate to QuestionnaireScreen
         Get.offAll(() => QuestionnaireScreen());
       }
-
     } else {
-      // User is not logged in
+      // User is not logged in (no token)
       Get.offAll(() => LoginScreen());
     }
   }

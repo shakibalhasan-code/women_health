@@ -6,66 +6,66 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
 import '../core/models/blog_model.dart';
 
-// Controller
 class MentalHealthController extends GetxController {
   RxString selectedCategory = "All".obs;
-  RxList<BlogPostModel> posts = <BlogPostModel>[].obs; // Use the existing model
+  RxList<BlogPostModel> posts = <BlogPostModel>[].obs;
+  RxList<String> categories = <String>["All"].obs;
   RxBool isLoading = true.obs;
 
-  final List<String> categories = [
-    "All",
-    "Period Care",
-    "Mental Wellness",
-    "Health Advice",
-    "Sexual Health",
-    "Product Reviews",
-    "Pregnancy",
-    "Skin & Beauty"
-  ];
-
-  // Declare this variable outside the try/catch block so it's accessible in the class
   SharedPreferences? prefs;
 
   @override
   void onInit() {
     super.onInit();
     initializeSharedPreferences();
-    fetchMentalHealthData();
   }
 
-  // Initialize SharedPreferences
   Future<void> initializeSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
+    await fetchCategories();
+    await fetchMentalHealthData();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found for categories');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(ApiEndpoints.allCategory), // Make sure this is correct
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final List<dynamic> categoryList = jsonData['categories'];
+        final List<String> fetchedNames =
+            categoryList.map((e) => e['name'].toString()).toList();
+
+        categories.addAll(fetchedNames);
+      } else {
+        print('Failed to fetch categories: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
   }
 
   Future<void> fetchMentalHealthData() async {
     try {
       isLoading(true);
-
-      // Get token from shared preferences
-      final token = prefs?.getString('token'); // Replace 'token' with the actual key you use to store the token
-
-      // Check if token is available
-      if (token == null) {
-        print('No token found in shared preferences');
-        isLoading(false); // Ensure loading is set to false
-        return; // Exit the function if the token is not available
-      }
-
-      final response = await http.get(
-        Uri.parse(ApiEndpoints.allMentalPost),
-        headers: {
-          'Authorization': 'Bearer $token', // Add the Authorization header
-        },
-      );
+      final response = await http.get(Uri.parse(ApiEndpoints.allMentalPost));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        final List<dynamic> postsData = jsonResponse['posts']; // Access the "posts" array
-
-        posts.value = postsData.map((item) => BlogPostModel.fromJson(item)).toList();
+        final List<dynamic> postsData = jsonResponse['posts'];
+        posts.value =
+            postsData.map((item) => BlogPostModel.fromJson(item)).toList();
       } else {
-        print('Failed to fetch mental health data: ${response.statusCode}');
+        print('Failed to fetch mental health posts: ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching mental health data: $e');
@@ -82,7 +82,13 @@ class MentalHealthController extends GetxController {
     if (selectedCategory.value == "All") {
       return posts;
     } else {
-      return posts.where((post) => post.category?.name == selectedCategory.value).toList();
+      return posts
+          .where((post) => post.category?.name == selectedCategory.value)
+          .toList();
     }
+  }
+
+  String getFullImageUrl(String imagePath) {
+    return '${ApiEndpoints.url}$imagePath';
   }
 }

@@ -38,15 +38,17 @@ class CommunityScreen extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: List.generate(
-                      communityController.postCategory.length,
-                          (index) {
-                        final category = communityController.postCategory[index];
+                      communityController.categories.length,
+                      (index) {
+                        final category = communityController.categories[index];
                         return GestureDetector(
                           onTap: () {
                             communityController.setSelectedCategory(category);
                           },
                           child: PostCategoryItem(
-                            isSelected: communityController.selectedCategory.value == category,
+                            isSelected:
+                                communityController.selectedCategory.value ==
+                                    category,
                             text: category,
                           ),
                         );
@@ -55,14 +57,15 @@ class CommunityScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: communityController.posts.length,
+                Expanded(child: Obx(() {
+                  final filteredPosts = communityController.getFilteredPosts();
+                  return ListView.builder(
+                    itemCount: filteredPosts.length,
                     itemBuilder: (context, index) {
-                      return CommunityPostItem(post: communityController.posts[index]); // Pass the post
+                      return CommunityPostItem(post: filteredPosts[index]);
                     },
-                  ),
-                ),
+                  );
+                })),
               ],
             );
           }
@@ -117,14 +120,14 @@ class CommunityScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r)),
                 child: Padding(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                   child: Row(
                     children: [
                       const Icon(Icons.search_rounded, color: Colors.black),
                       SizedBox(width: 5.w),
                       Text('Search',
                           style:
-                          AppTheme.titleSmall.copyWith(color: Colors.black))
+                              AppTheme.titleSmall.copyWith(color: Colors.black))
                     ],
                   ),
                 ),

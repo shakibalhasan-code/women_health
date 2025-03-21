@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:mime_type/mime_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -13,18 +12,7 @@ import '../core/models/community_post_model.dart';
 import 'package:mime_type/mime_type.dart';
 
 class CommunityController extends GetxController {
-  var postCategory = [
-    'All',
-    'Period Care',
-    'Mental Wellness',
-    'Health Advice',
-    'Hormonal Health',
-    'Sexual Health',
-    'Product Reviews',
-    'Pregnancy',
-    'Skin & Beauty'
-  ].obs;
-
+  RxList<String> categories = <String>["All"].obs;
   var selectedCategory = 'All'.obs;
   var isLikedPost = false.obs;
 
@@ -38,11 +26,50 @@ class CommunityController extends GetxController {
   final descriptionController = TextEditingController().obs;
   Rx<File?> selectedImage = Rx<File?>(null);
 
+  // Search-related variables
+  RxList<CommunityPostModel> searchResults = <CommunityPostModel>[].obs;
+  RxBool isSearchLoading = false.obs;
+
+  // Saved posts
+  RxSet<String> savedPostIds =
+      <String>{}.obs; // Use a Set for efficient checking
+
   @override
-  void onInit() async{
+  void onInit() async {
     super.onInit();
     await initializeSharedPreferences(); // Wait until prefs is initialized
-    fetchPosts(); // Now call fetchPosts
+    await fetchPosts(); // Now call fetchPosts
+    await fetchCategories();
+    loadSavedPosts(); // Load saved post IDs from SharedPreferences
+  }
+
+// 🟢 1. Fetching all categories (from secured endpoint)
+  Future<void> fetchCategories() async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found for categories');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(ApiEndpoints.allCategory), // Make sure this is correct
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final List<dynamic> categoryList = jsonData['categories'];
+        final List<String> fetchedNames =
+            categoryList.map((e) => e['name'].toString()).toList();
+
+        categories.addAll(fetchedNames);
+      } else {
+        print('Failed to fetch categories: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
   }
 
   Future<void> initializeSharedPreferences() async {
@@ -51,6 +78,16 @@ class CommunityController extends GetxController {
 
   void setSelectedCategory(String category) {
     selectedCategory.value = category;
+  }
+
+  List<CommunityPostModel> getFilteredPosts() {
+    if (selectedCategory.value == "All") {
+      return posts;
+    } else {
+      return posts
+          .where((post) => post.category == selectedCategory.value)
+          .toList();
+    }
   }
 
   Future<void> fetchPosts() async {
@@ -69,6 +106,7 @@ class CommunityController extends GetxController {
         List<dynamic> jsonResponse = json.decode(response.body);
         print('Decoded JSON response: $jsonResponse');
 
+        // fix here:
         posts.value = jsonResponse.map((item) {
           return CommunityPostModel.fromJson(item);
         }).toList();
@@ -131,7 +169,8 @@ class CommunityController extends GetxController {
       }
 
       // Create multipart request
-      var request = http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
+      var request =
+          http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
       request.headers['Authorization'] = 'Bearer $token'; // Add token to header
       request.fields['title'] = titleController.value.text;
       request.fields['description'] = descriptionController.value.text;
@@ -143,8 +182,8 @@ class CommunityController extends GetxController {
         await http.MultipartFile.fromPath(
           'image', // This should match your API field name
           imageFile.path,
-          contentType: MediaType(
-              'image', 'jpeg'), // Adjust the content type based on your image type
+          contentType: MediaType('image',
+              'jpeg'), // Adjust the content type based on your image type
         ),
       );
 
@@ -167,7 +206,8 @@ class CommunityController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
         );
       } else {
-        print('Failed to create post: ${response.statusCode} - ${response.body}');
+        print(
+            'Failed to create post: ${response.statusCode} - ${response.body}');
         Get.snackbar(
           'Error',
           'Failed to create post: ${response.statusCode} - ${response.body}',
@@ -185,6 +225,7 @@ class CommunityController extends GetxController {
       isLoading(false);
     }
   }
+
   Future<void> toggleLike(CommunityPostModel post) async {
     try {
       isLoading(true);
@@ -205,16 +246,8 @@ class CommunityController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        // Optimistically update likes locally
-        final isLiked = post.likes?.any((like) => like.id == 'userId') ?? false;
-
-        if (isLiked) {
-          post.likes?.removeWhere((like) => like.id == 'userId');
-        } else {
-          post.likes?.add(User(id: 'userId', name: 'userName', email: 'userEmail'));
-        }
-        //For instant like and dislike update after clicking action btn
-        posts.refresh();
+        // After a successful like/unlike, re-fetch the posts list to get updated like information.
+        await fetchPosts();
         Get.snackbar('Success', 'Like Status Updated',
             snackPosition: SnackPosition.BOTTOM);
       } else {
@@ -252,21 +285,112 @@ class CommunityController extends GetxController {
       ..fields['title'] = title
       ..fields['category'] = selectedCategory.value
       ..fields['description'] = description
-      ..files.add(await http.MultipartFile.fromPath(
-        'image',
-        image.path
-
-      ));
+      ..files.add(await http.MultipartFile.fromPath('image', image.path));
 
     try {
       var response = await request.send();
       if (response.statusCode == 201) {
         print("Post created successfully!");
+        Get.back();
+        fetchPosts();
       } else {
         print("Failed to create post: ${response.reasonPhrase}");
       }
     } catch (e) {
       print("Error: $e");
     }
+  }
+
+  // 🟢 Search Logic moved to Controller
+  Future<void> searchPosts(String query) async {
+    isSearchLoading(true);
+    searchResults.clear();
+
+    try {
+      final String apiUrl =
+          '${ApiEndpoints.baseUrl}/post/search?category=$query';
+      print('Search API URL: $apiUrl');
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final decodedData = json.decode(response.body);
+        if (decodedData['posts'] != null) {
+          List<dynamic> postList = decodedData['posts'];
+
+          // fix here:
+          searchResults.value = postList
+              .map((json) {
+                if (json is Map<String, dynamic>) {
+                  return CommunityPostModel.fromJson(json);
+                } else {
+                  print('Invalid JSON format: $json');
+                  return null;
+                }
+              })
+              .whereType<CommunityPostModel>()
+              .toList();
+        } else {
+          searchResults.clear();
+        }
+      } else {
+        print('Search API failed with status code: ${response.statusCode}');
+        Get.snackbar("Error", "Search failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      print('Error during search: $e');
+      Get.snackbar("Error", "Network error during search: $e");
+    } finally {
+      isSearchLoading(false);
+    }
+  }
+
+  // 🟢 Save Post Logic
+  Future<void> toggleSavePost(String postId) async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found in shared preferences');
+        Get.snackbar('Error', 'Please Login First',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      final String apiUrl = '${ApiEndpoints.baseUrl}/post/saved/$postId';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        // Update the savedPostIds locally
+        if (savedPostIds.contains(postId)) {
+          savedPostIds.remove(postId);
+        } else {
+          savedPostIds.add(postId);
+        }
+        saveSavedPosts(); // Save to SharedPreferences
+        Get.snackbar('Success', 'Post saved status updated',
+            snackPosition: SnackPosition.BOTTOM);
+      } else {
+        print('API call failed with status code: ${response.statusCode}');
+        Get.snackbar('Error', 'Failed to save post: ${response.body}',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      print('Error saving post: $e');
+      Get.snackbar('Error', 'Error while saving post: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  // 🟢 Load Saved Posts from SharedPreferences
+  Future<void> loadSavedPosts() async {
+    final saved = prefs?.getStringList('savedPosts') ?? [];
+    savedPostIds.addAll(saved);
+  }
+
+  // 🟢 Save Saved Posts to SharedPreferences
+  Future<void> saveSavedPosts() async {
+    await prefs?.setStringList('savedPosts', savedPostIds.toList());
   }
 }

@@ -24,37 +24,36 @@ class BlogController extends GetxController {
 
   Future<void> initializeSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
-    await fetchAllCategories(); // 1. Fetch categories
+    await fetchCategories(); // 1. Fetch categories
     await fetchBlogData(); // 2. Then fetch blog data
   }
 
   // 🟢 1. Fetching all categories (from secured endpoint)
-  Future<void> fetchAllCategories() async {
+  Future<void> fetchCategories() async {
     try {
       final token = prefs?.getString('token');
       if (token == null) {
-        print('Token not found');
+        print('No token found for categories');
         return;
       }
 
       final response = await http.get(
-        Uri.parse(ApiEndpoints.allCategory),
+        Uri.parse(ApiEndpoints.allCategory), // Make sure this is correct
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        final List<dynamic> fetched = jsonData['categories'];
+        final List<dynamic> categoryList = jsonData['categories'];
+        final List<String> fetchedNames =
+            categoryList.map((e) => e['name'].toString()).toList();
 
-        final List<String> names =
-            fetched.map((e) => e['name'].toString()).toList();
-        categories.addAll(names); // starts with "All", then adds API names
-
-        print("Categories: $categories");
+        categories.addAll(fetchedNames);
       } else {
-        print('Failed to load categories: ${response.statusCode}');
+        print('Failed to fetch categories: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error loading categories: $e');
+      print('Error fetching categories: $e');
     }
   }
 

@@ -37,19 +37,24 @@ class CommunityPostModel {
     userId = json['userId'] != null ? User.fromJson(json['userId']) : null;
     title = json['title'];
 
-    // 🔥 Fix this line
-    category = json['category'] is Map<String, dynamic>
+    category = (json['category'] is Map && json['category']?['name'] != null)
         ? json['category']['name']
-        : json['category'];
+        : json['categoryName'] ?? json['category']?.toString();
 
     description = json['description'];
-    image = json['image'];
+    image = json['imageUrl'] ??
+        json['image']; // Use imageUrl if available, otherwise image
 
     likes.clear();
     if (json['likes'] != null) {
-      (json['likes'] as List).forEach((v) {
-        likes.add(User.fromJson(v));
-      });
+      if (json['likes'] is List) {
+        // Add null and type checking here
+        (json['likes'] as List).forEach((v) {
+          if (v is Map<String, dynamic>) {
+            likes.add(User.fromJson(v));
+          }
+        });
+      }
     }
 
     comments = json['comments'] ?? [];

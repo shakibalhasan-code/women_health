@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/views/screens/community/comment_screen.dart';
 
@@ -11,7 +12,26 @@ class CommunityPostItem extends StatelessWidget {
 
   CommunityPostItem({Key? key, required this.post}) : super(key: key);
 
-  final communityController = Get.find<CommunityController>();
+  final CommunityController communityController =
+      Get.find<CommunityController>();
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds} seconds ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} minutes ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      return DateFormat('MMM d, yyyy')
+          .format(dateTime); // Format date like "Dec 25, 2023"
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +74,7 @@ class CommunityPostItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${DateTime.now().difference(post.createdAt!).inHours} hours ago', // Adjust as needed
+                    _getTimeAgo(post.createdAt!), // Use the function here
                     style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                   ),
                 ],
@@ -106,7 +126,8 @@ class CommunityPostItem extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Image.network(
-                  post.image ?? 'https://via.placeholder.com/400x200', // Placeholder if no image
+                  post.image ??
+                      'https://via.placeholder.com/400x200', // Placeholder if no image
                   width: double.infinity,
                   height: 200.h,
                   fit: BoxFit.cover,
@@ -130,27 +151,52 @@ class CommunityPostItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Obx(() {
-                final isLiked = post.likes?.any((like) => like.id == 'userId') ?? false;
+                final isLiked =
+                    post.likes?.any((like) => like.id == 'userId') ?? false;
                 return InkWell(
                   onTap: () {
                     communityController.toggleLike(post);
                   },
                   child: _buildAction(
-                    isLiked ? Icons.thumb_up_sharp : Icons.thumb_up_alt_outlined,
-                    isLiked ? 'Supported(${post.totalLikes})' : 'Support(${post.totalLikes})', // Update text dynamically and show total likes
+                    isLiked
+                        ? Icons.thumb_up_sharp
+                        : Icons.thumb_up_alt_outlined,
+                    isLiked
+                        ? 'Supported(${post.totalLikes})'
+                        : 'Support(${post.totalLikes})', // Update text dynamically and show total likes
                     isLiked ? Colors.blue : Colors.black,
                   ),
                 );
               }),
               InkWell(
-                onTap: () => Get.to(CommentScreen(postId: post.id!,comments: post.comments ?? [],)),
-                child: _buildAction(Icons.comment_outlined, 'Comment(${post.totalComments})', Colors.black), // Show total comments
+                onTap: () => Get.to(CommentScreen(
+                  postId: post.id!,
+                  comments: post.comments ?? [],
+                )),
+                child: _buildAction(
+                    Icons.comment_outlined,
+                    'Comment(${post.totalComments})',
+                    Colors.black), // Show total comments
               ),
               InkWell(
                 onTap: () {},
-                child: _buildAction(Icons.share_outlined, 'Share', Colors.black),
+                child:
+                    _buildAction(Icons.share_outlined, 'Share', Colors.black),
               ),
-              _buildAction(Icons.bookmark_outline, 'Save', Colors.black),
+              Obx(() {
+                final isSaved =
+                    communityController.savedPostIds.contains(post.id);
+                return InkWell(
+                  onTap: () {
+                    communityController.toggleSavePost(post.id!);
+                  },
+                  child: _buildAction(
+                    isSaved ? Icons.bookmark : Icons.bookmark_outline,
+                    'Save',
+                    isSaved ? Colors.blue : Colors.black,
+                  ),
+                );
+              }),
             ],
           ),
         ],

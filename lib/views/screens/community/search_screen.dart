@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:women_health/controller/community_controller.dart';
 
 class SearchScreen extends StatelessWidget {
-  const SearchScreen({super.key});
+  SearchScreen({Key? key}) : super(key: key);
+
+  final CommunityController communityController =
+      Get.find<CommunityController>();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Search Community Posts"),
+        title: const Text("Search Community Posts"),
         centerTitle: true,
       ),
       body: Padding(
@@ -16,9 +22,10 @@ class SearchScreen extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: _searchController,
               decoration: InputDecoration(
                 hintText: "Search posts...",
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
                   borderSide: BorderSide.none,
@@ -28,37 +35,55 @@ class SearchScreen extends StatelessWidget {
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               ),
+              onSubmitted: (query) {
+                communityController.searchPosts(query);
+              },
             ),
             SizedBox(height: 20.h),
             Expanded(
-              child: ListView.builder(
-                itemCount:
-                    10, // Example count, replace with actual search results
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: ListTile(
-                      title: Text("Community Post Title $index"),
-                      subtitle: Text(
-                          "This is a sample description of the community post."),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.r),
-                        child: Image.network(
-                          'https://media.istockphoto.com/id/1513072392/photo/hands-holding-paper-head-human-brain-with-flowers-self-care-and-mental-health-concept.jpg?s=612x612&w=0&k=20&c=CCzxREX01-dEqN3P_1M1ZrsZeenCxTmDWbp-goLwjMc=',
-                          width: 50.w,
-                          height: 50.h,
-                          fit: BoxFit.cover,
-                        ),
+              child: Obx(
+                () => communityController.isLoading.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: communityController.searchResults.length,
+                        itemBuilder: (context, index) {
+                          final post = communityController.searchResults[index];
+                          return Card(
+                            margin: EdgeInsets.only(bottom: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            child: ListTile(
+                              title: Text(post.title ?? "No Title"),
+                              subtitle:
+                                  Text(post.description ?? "No Description"),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.r),
+                                child: Image.network(
+                                  post.image ??
+                                      'https://via.placeholder.com/50', // Placeholder image
+                                  width: 50.w,
+                                  height: 50.h,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 50.w,
+                                      height: 50.h,
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(Icons.error_outline),
+                                    );
+                                  },
+                                ),
+                              ),
+                              onTap: () {
+                                // Navigate to post details
+                                // Example:
+                                // Get.toNamed('/postDetails', arguments: post.id);
+                              },
+                            ),
+                          );
+                        },
                       ),
-                      onTap: () {
-                        // Navigate to post details
-                      },
-                    ),
-                  );
-                },
               ),
             ),
           ],

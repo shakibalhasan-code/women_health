@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:women_health/controller/community_controller.dart';
-
+import 'package:women_health/views/screens/community/community_post_details_screen.dart';
+import 'package:get/get.dart';
 class SavedPostsScreen extends StatelessWidget {
   SavedPostsScreen({Key? key}) : super(key: key);
 
@@ -86,74 +87,77 @@ class SavedPostsScreen extends StatelessWidget {
                   itemCount: savedPosts.length,
                   itemBuilder: (context, index) {
                     final post = savedPosts[index];
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6.h),
-                      child: Row(
-                        children: [
-                          // Thumbnail
-                          Container(
-                            width: 50.w,
-                            height: 50.w,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.r),
-                              child: Image.network(
-                                post.image ?? 'https://via.placeholder.com/50',
-                                width: 50.w,
-                                height: 50.w,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.error_outline);
-                                },
+                    return InkWell(
+                      onTap:() => Get.to(CommunityPostDetailsScreen(post: post)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 6.h),
+                        child: Row(
+                          children: [
+                            // Thumbnail
+                            Container(
+                              width: 50.w,
+                              height: 50.w,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Image.network(
+                                  post.image ?? 'https://via.placeholder.com/50',
+                                  width: 50.w,
+                                  height: 50.w,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error_outline);
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 10.w),
+                            SizedBox(width: 10.w),
 
-                          // Post Details
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  post.title ?? "No Title",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
+                            // Post Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    post.title ?? "No Title",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 3.h),
-                                Text(
-                                  _getTimeAgo(post.createdAt!),
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Colors.grey,
+                                  SizedBox(height: 3.h),
+                                  Text(
+                                    _getTimeAgo(post.createdAt!),
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Remove Button
-                          TextButton(
-                            onPressed: () {
-                              communityController.toggleSavePost(post.id!);
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.grey.shade200,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
+                                ],
                               ),
                             ),
-                            child: const Text("Remove",
-                                style: TextStyle(color: Colors.black)),
-                          ),
-                        ],
+
+                            // Remove Button
+                            TextButton(
+                              onPressed: () {
+                                communityController.toggleSavePost(post.id!);
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.grey.shade200,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                              ),
+                              child: const Text("Remove",
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

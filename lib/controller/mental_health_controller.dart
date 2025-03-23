@@ -57,7 +57,13 @@ class MentalHealthController extends GetxController {
   Future<void> fetchMentalHealthData() async {
     try {
       isLoading(true);
-      final response = await http.get(Uri.parse(ApiEndpoints.allMentalPost));
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found for categories');
+        return;
+      }
+
+      final response = await http.get(Uri.parse(ApiEndpoints.allMentalPost),headers: {'Authorization': 'Bearer $token'});
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);

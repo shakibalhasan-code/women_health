@@ -9,15 +9,20 @@ class PaymentController extends GetxController {
   final timeController = TextEditingController();
   final noteController = TextEditingController();
 
+  // New Text Editing Controllers for User Info
+  final nameController = TextEditingController();
+  final addressController = TextEditingController();
+  final phoneController = TextEditingController();
+
   var selectedPaymentMethod = 'Bkash'.obs;
-  final List<String> paymentMethods = ['Bkash', 'Nagod', 'Cash on delivery'];
+  final List<String> paymentMethods = ['Bkash', 'Nagad', 'Cash on delivery'];
 
   void selectPaymentMethod(String method) {
     selectedPaymentMethod.value = method;
   }
 
   void copyNumber() {
-    Clipboard.setData(ClipboardData(text: "+8801812345678"));
+    Clipboard.setData(const ClipboardData(text: "+8801812345678"));
     Get.snackbar("Copied", "Number copied to clipboard");
   }
 
@@ -34,6 +39,9 @@ class PaymentController extends GetxController {
     transactionController.dispose();
     timeController.dispose();
     noteController.dispose();
+    nameController.dispose();
+    addressController.dispose();
+    phoneController.dispose();
     super.onClose();
   }
 }

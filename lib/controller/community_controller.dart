@@ -15,12 +15,13 @@ class CommunityController extends GetxController {
   RxList<String> categories = <String>["All"].obs;
   var selectedCategory = 'All'.obs;
   var isLikedPost = false.obs;
-
+  var allComments = [].obs;
   // Add these:
   RxList<CommunityPostModel> posts = <CommunityPostModel>[].obs;
   RxBool isLoading = true.obs;
   SharedPreferences? prefs;
-
+  RxBool isSearchLoading = false.obs;
+  RxString searchQuery = "".obs; // Track Search Query.
   // Add these for the create post screen
   final titleController = TextEditingController().obs;
   final descriptionController = TextEditingController().obs;
@@ -28,7 +29,7 @@ class CommunityController extends GetxController {
 
   // Search-related variables
   RxList<CommunityPostModel> searchResults = <CommunityPostModel>[].obs;
-  RxBool isSearchLoading = false.obs;
+
 
   // Saved posts
   RxSet<String> savedPostIds =
@@ -40,7 +41,7 @@ class CommunityController extends GetxController {
     await initializeSharedPreferences(); // Wait until prefs is initialized
     await fetchPosts(); // Now call fetchPosts
     await fetchCategories();
-    loadSavedPosts(); // Load saved post IDs from SharedPreferences
+    await loadSavedPosts(); // Load saved post IDs from SharedPreferences
   }
 
 // 🟢 1. Fetching all categories (from secured endpoint)
@@ -61,7 +62,7 @@ class CommunityController extends GetxController {
         final jsonData = json.decode(response.body);
         final List<dynamic> categoryList = jsonData['categories'];
         final List<String> fetchedNames =
-            categoryList.map((e) => e['name'].toString()).toList();
+        categoryList.map((e) => e['name'].toString()).toList();
 
         categories.addAll(fetchedNames);
       } else {
@@ -69,6 +70,50 @@ class CommunityController extends GetxController {
       }
     } catch (e) {
       print('Error fetching categories: $e');
+    }
+  }
+
+  Future<void> addComment(String postId, String commentText) async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found in shared preferences');
+        Get.snackbar('Error', 'Please Login First',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      final apiUrl = '${ApiEndpoints.baseUrl}/comment/$postId';
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'commentText': commentText,
+        }),
+      );
+      allComments.add(commentText);
+      refresh();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Comment added successfully!');
+        // Optionally: Refresh the posts or comments
+        await fetchPosts(); // Re-fetch all posts to update comments count, this may not be efficient for large data
+        Get.back();
+        Get.snackbar('Success', 'Comment Added Successfully',
+            snackPosition: SnackPosition.BOTTOM);
+      } else {
+        print('Failed to add comment: ${response.statusCode} - ${response.body}');
+        Get.snackbar('Error', 'Failed to add comment: ${response.body}',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      print('Error adding comment: $e');
+      Get.snackbar('Error', 'Error adding comment: $e',
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -88,6 +133,29 @@ class CommunityController extends GetxController {
           .where((post) => post.category == selectedCategory.value)
           .toList();
     }
+  }
+
+  // 🟢 NEW: Local Search Function
+  void searchPosts(String query) {
+    searchQuery.value = query; // save search Query.
+    isSearchLoading.value = true;
+    searchResults.clear();
+
+    if (query.isEmpty) {
+      searchResults.value = [];
+      isSearchLoading.value = false;
+      return;
+    }
+
+    final lowercaseQuery = query.toLowerCase();
+
+    searchResults.value = posts.where((post) {
+      final title = post.title?.toLowerCase() ?? '';
+      final description = post.description?.toLowerCase() ?? '';
+      return title.contains(lowercaseQuery) ||
+          description.contains(lowercaseQuery);
+    }).toList();
+    isSearchLoading.value = false;
   }
 
   Future<void> fetchPosts() async {
@@ -170,7 +238,7 @@ class CommunityController extends GetxController {
 
       // Create multipart request
       var request =
-          http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
+      http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
       request.headers['Authorization'] = 'Bearer $token'; // Add token to header
       request.fields['title'] = titleController.value.text;
       request.fields['description'] = descriptionController.value.text;
@@ -301,86 +369,50 @@ class CommunityController extends GetxController {
     }
   }
 
-  // 🟢 Search Logic moved to Controller
-  Future<void> searchPosts(String query) async {
-    isSearchLoading(true);
-    searchResults.clear();
 
-    try {
-      final String apiUrl =
-          '${ApiEndpoints.baseUrl}/post/search?category=$query';
-      print('Search API URL: $apiUrl');
-      final response = await http.get(Uri.parse(apiUrl));
 
-      if (response.statusCode == 200) {
-        final decodedData = json.decode(response.body);
-        if (decodedData['posts'] != null) {
-          List<dynamic> postList = decodedData['posts'];
-
-          // fix here:
-          searchResults.value = postList
-              .map((json) {
-                if (json is Map<String, dynamic>) {
-                  return CommunityPostModel.fromJson(json);
-                } else {
-                  print('Invalid JSON format: $json');
-                  return null;
-                }
-              })
-              .whereType<CommunityPostModel>()
-              .toList();
-        } else {
-          searchResults.clear();
-        }
-      } else {
-        print('Search API failed with status code: ${response.statusCode}');
-        Get.snackbar("Error", "Search failed: ${response.statusCode}");
-      }
-    } catch (e) {
-      print('Error during search: $e');
-      Get.snackbar("Error", "Network error during search: $e");
-    } finally {
-      isSearchLoading(false);
-    }
-  }
 
   // 🟢 Save Post Logic
   Future<void> toggleSavePost(String postId) async {
-    try {
-      final token = prefs?.getString('token');
-      if (token == null) {
-        print('No token found in shared preferences');
-        Get.snackbar('Error', 'Please Login First',
-            snackPosition: SnackPosition.BOTTOM);
-        return;
-      }
+    final bool isCurrentlySaved = savedPostIds.contains(postId);
 
-      final String apiUrl = '${ApiEndpoints.baseUrl}/post/saved/$postId';
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      if (response.statusCode == 200) {
-        // Update the savedPostIds locally
-        if (savedPostIds.contains(postId)) {
-          savedPostIds.remove(postId);
-        } else {
-          savedPostIds.add(postId);
-        }
-        saveSavedPosts(); // Save to SharedPreferences
-        Get.snackbar('Success', 'Post saved status updated',
-            snackPosition: SnackPosition.BOTTOM);
-      } else {
-        print('API call failed with status code: ${response.statusCode}');
-        Get.snackbar('Error', 'Failed to save post: ${response.body}',
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    } catch (e) {
-      print('Error saving post: $e');
-      Get.snackbar('Error', 'Error while saving post: $e',
-          snackPosition: SnackPosition.BOTTOM);
+    // Immediately update local state
+    if (isCurrentlySaved) {
+      savedPostIds.remove(postId);
+    } else {
+      savedPostIds.add(postId);
     }
+    await saveSavedPosts(); // Save the updated list to SharedPreferences
+
+    // // Make the API call in the background
+    // try {
+    //   final token = prefs?.getString('token');
+    //   if (token == null) {
+    //     print('No token found in shared preferences');
+    //     Get.snackbar('Error', 'Please Login First',
+    //         snackPosition: SnackPosition.BOTTOM);
+    //     return;
+    //   }
+    //
+    //   final String apiUrl = '${ApiEndpoints.baseUrl}/post/saved/$postId';
+    //   final response = await http.post(
+    //     Uri.parse(apiUrl),
+    //     headers: {'Authorization': 'Bearer $token'},
+    //   );
+    //
+    //   if (response.statusCode == 200) {
+    //     Get.snackbar('Success', 'Post saved status updated',
+    //         snackPosition: SnackPosition.BOTTOM);
+    //   } else {
+    //     print('API call failed with status code: ${response.statusCode}');
+    //     // Get.snackbar('Error', 'Failed to save post on server: ${response.body}',
+    //     //     snackPosition: SnackPosition.BOTTOM);
+    //   }
+    // } catch (e) {
+    //   print('Error saving post: $e');
+    //   Get.snackbar('Error', 'Error while saving post on server: $e',
+    //       snackPosition: SnackPosition.BOTTOM);
+    // }
   }
 
   // 🟢 Load Saved Posts from SharedPreferences

@@ -15,7 +15,6 @@ class CommunityScreen extends StatelessWidget {
   final bool? isBack;
 
   CommunityScreen({super.key, this.isBack});
-
   final communityController = Get.find<CommunityController>();
 
   @override
@@ -59,7 +58,7 @@ class CommunityScreen extends StatelessWidget {
                 SizedBox(height: 8.h),
                 Expanded(child: Obx(() {
                   final filteredPosts = communityController.getFilteredPosts();
-                  return ListView.builder(
+                  return filteredPosts.isEmpty ? Center(child: Text('Empty')) :ListView.builder(
                     itemCount: filteredPosts.length,
                     itemBuilder: (context, index) {
                       return CommunityPostItem(post: filteredPosts[index]);

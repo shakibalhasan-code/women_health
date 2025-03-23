@@ -1,92 +1,176 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/screens/marketplace/payment_screen.dart';
+import '../../../core/models/product_model.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen({super.key});
+class ProductDetailsScreen extends StatefulWidget {
+  final Product product;
+
+  const ProductDetailsScreen({Key? key, required this.product})
+      : super(key: key);
+
+  @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  int _selectedImageIndex = 0;
+  int _quantity = 1; // Initialize quantity to 1
+
+  void _increaseQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  void _decreaseQuantity() {
+    if (_quantity > 1) {
+      setState(() {
+        _quantity--;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "X-Corolla",
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+        title: Text(widget.product.name),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.r),
-                  child: Image.network(
-                    "https://media.cdn-jaguarlandrover.com/api/v2/images/55880/w/680.jpg",
-                    width: double.infinity,
-                    height: 250.h,
-                    fit: BoxFit.cover,
-                  ),
+      body: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image (Display Selected Image)
+            AspectRatio(
+              aspectRatio: 1.5,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: Image.network(
+                  widget.product.images.isNotEmpty
+                      ? widget.product.images[_selectedImageIndex]
+                      : 'https://via.placeholder.com/300',
+                  fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 16.h),
-              Text(
-                "X-Corolla",
-                style:
-                    AppTheme.titleLarge.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Toyota",
-                style: AppTheme.titleSmall.copyWith(color: Colors.grey),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                "\$25,000",
-                style: AppTheme.titleMedium.copyWith(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 12.h),
-              Divider(),
-              SizedBox(height: 8.h),
-              Text(
-                "Description",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                "The X-Corolla is a stylish and powerful sedan known for its exceptional performance, fuel efficiency, and advanced safety features. Designed with a sleek exterior and a comfortable, spacious interior, this vehicle is perfect for city driving and long journeys alike. The Toyota X-Corolla offers top-tier technology, including a smart infotainment system, adaptive cruise control, and premium leather seating.",
-                style: TextStyle(fontSize: 14.sp, color: Colors.black87),
-              ),
-              SizedBox(height: 20.h),
-              Divider(),
-              SizedBox(height: 12.h),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () => Get.to(PaymentScreen()),
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 12.h, horizontal: 32.w),
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.r),
+            ),
+            SizedBox(height: 16.h),
+
+            // Image List
+            SizedBox(
+              height: 80.h, // Adjust height as needed
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.product.images.length,
+                separatorBuilder: (context, index) => SizedBox(width: 8.w),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedImageIndex = index;
+                      });
+                    },
+                    child: Container(
+                      width: 80.w, // Adjust width as needed
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: _selectedImageIndex == index
+                              ? AppTheme.primaryColor
+                              : Colors.grey.shade300,
+                          width: 1.5.w,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6.r),
+                        child: Image.network(
+                          widget.product.images[index],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(child: Icon(Icons.error));
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    "Proceed to Buy",
-                    style: TextStyle(fontSize: 16.sp, color: Colors.white),
-                  ),
-                ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+
+            // Product Name
+            SizedBox(height: 10.h),
+            Text(
+              widget.product.name,
+              style: AppTheme.titleMedium.copyWith(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.h),
+
+            // Category
+            Text(
+              'Category: ${widget.product.category.name}',
+              style: AppTheme.titleMedium.copyWith(color: Colors.grey[700]),
+            ),
+            SizedBox(height: 16.h),
+
+            // Price
+            Text(
+              '\৳${widget.product.price.toStringAsFixed(2)}',
+              style: AppTheme.titleSmall.copyWith(
+                  color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16.h),
+
+            // Description
+            Text(
+              widget.product.description,
+              style: AppTheme.titleSmall,
+            ),
+
+            // Quantity Section
+            SizedBox(height: 16.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Quantity:',
+                  style: AppTheme.titleSmall,
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: _decreaseQuantity,
+                    ),
+                    Text(
+                      _quantity.toString(),
+                      style: AppTheme.titleMedium,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _increaseQuantity,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.to(() => PaymentScreen(
+                    product: widget.product,
+                    quantity: _quantity,
+                  ));
+                },
+                child: Text('Buy Now'),
+              ),
+            )
+          ],
         ),
       ),
     );

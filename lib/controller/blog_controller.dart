@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
-
 import '../core/models/blog_model.dart';
 
 // Controller
@@ -26,6 +25,11 @@ class BlogController extends GetxController {
     prefs = await SharedPreferences.getInstance();
     await fetchCategories(); // 1. Fetch categories
     await fetchBlogData(); // 2. Then fetch blog data
+  }
+
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
   // 🟢 1. Fetching all categories (from secured endpoint)
@@ -62,7 +66,13 @@ class BlogController extends GetxController {
     try {
       isLoading(true);
 
-      final response = await http.get(Uri.parse(ApiEndpoints.blogPost));
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found for categories');
+        return;
+      }
+
+      final response = await http.get(Uri.parse(ApiEndpoints.blogPost), headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         final List<dynamic> postList = jsonData['posts'];

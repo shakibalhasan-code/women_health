@@ -64,13 +64,13 @@ class BlogScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 15.h),
                 Expanded(
-                  child: ListView.builder(
+                  child: controller.blogPosts.isEmpty ? Center(child: Text('Empty')) : ListView.builder(
                     itemCount: controller.getFilteredPosts().length,
                     itemBuilder: (context, index) {
                       final post = controller.getFilteredPosts()[index];
                       return _blogPostCard(context, post);
                     },
-                  ),
+                  )
                 ),
               ],
             );

@@ -2,18 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/views/screens/community/comment_screen.dart';
 
 import '../../../../core/models/community_post_model.dart';
 
-class CommunityPostItem extends StatelessWidget {
+class CommunityPostItem extends StatefulWidget {
   final CommunityPostModel post;
 
   CommunityPostItem({Key? key, required this.post}) : super(key: key);
 
+  @override
+  State<CommunityPostItem> createState() => _CommunityPostItemState();
+}
+
+class _CommunityPostItemState extends State<CommunityPostItem> {
+  String? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUserId();
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentUserId = prefs.getString('userId');
+    });
+  }
+
   final CommunityController communityController =
-      Get.find<CommunityController>();
+  Get.find<CommunityController>();
 
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
@@ -58,7 +79,8 @@ class CommunityPostItem extends StatelessWidget {
                 radius: 18.r,
                 backgroundColor: Colors.purple.shade100,
                 child: Text(
-                  post.userId?.name?.substring(0, 1).toUpperCase() ?? 'A',
+                  widget.post.userId?.name?.substring(0, 1).toUpperCase() ??
+                      'A',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -67,34 +89,36 @@ class CommunityPostItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    post.userId?.name ?? 'Unknown User',
+                    widget.post.userId?.name ?? 'Unknown User',
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    _getTimeAgo(post.createdAt!), // Use the function here
+                    _getTimeAgo(widget.post.createdAt!), // Use the function here
                     style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                   ),
                 ],
               ),
               const Spacer(),
-              Text(
-                'Follow',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
+              // Conditionally Show/Hide "Follow" Text
+              if (currentUserId != widget.post.userId?.id)
+                Text(
+                  'Follow',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
                 ),
-              ),
             ],
           ),
           SizedBox(height: 10.h),
 
           // Post Title
           Text(
-            post.title ?? 'No Title',
+            widget.post.title ?? 'No Title',
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -105,7 +129,7 @@ class CommunityPostItem extends StatelessWidget {
 
           // Post Content
           Text(
-            post.description ?? 'No Description',
+            widget.post.description ?? 'No Description',
             style: TextStyle(fontSize: 14.sp, color: Colors.black87),
           ),
           Text(
@@ -126,7 +150,7 @@ class CommunityPostItem extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Image.network(
-                  post.image ??
+                  widget.post.image ??
                       'https://via.placeholder.com/400x200', // Placeholder if no image
                   width: double.infinity,
                   height: 200.h,
@@ -150,45 +174,45 @@ class CommunityPostItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Obx(() {
+              GetBuilder<CommunityController>(builder: (controller) {
                 final isLiked =
-                    post.likes?.any((like) => like.id == 'userId') ?? false;
+                    widget.post.likes?.any((like) => like.id == currentUserId) ??
+                        false;
                 return InkWell(
                   onTap: () {
-                    communityController.toggleLike(post);
+                    communityController.toggleLike(widget.post);
                   },
                   child: _buildAction(
                     isLiked
                         ? Icons.thumb_up_sharp
                         : Icons.thumb_up_alt_outlined,
                     isLiked
-                        ? 'Supported(${post.totalLikes})'
-                        : 'Support(${post.totalLikes})', // Update text dynamically and show total likes
+                        ? 'Supported(${widget.post.totalLikes})'
+                        : 'Support(${widget.post.totalLikes})', // Update text dynamically and show total likes
                     isLiked ? Colors.blue : Colors.black,
                   ),
                 );
               }),
               InkWell(
                 onTap: () => Get.to(CommentScreen(
-                  postId: post.id!,
-                  comments: post.comments ?? [],
+                  postId: widget.post.id!, comments: widget.post.comments ?? [],
                 )),
                 child: _buildAction(
                     Icons.comment_outlined,
-                    'Comment(${post.totalComments})',
+                    'Comment(${widget.post.totalComments})',
                     Colors.black), // Show total comments
               ),
               InkWell(
                 onTap: () {},
                 child:
-                    _buildAction(Icons.share_outlined, 'Share', Colors.black),
+                _buildAction(Icons.share_outlined, 'Share', Colors.black),
               ),
-              Obx(() {
+              GetBuilder<CommunityController>(builder: (controller) {
                 final isSaved =
-                    communityController.savedPostIds.contains(post.id);
+                communityController.savedPostIds.contains(widget.post.id);
                 return InkWell(
                   onTap: () {
-                    communityController.toggleSavePost(post.id!);
+                    communityController.toggleSavePost(widget.post.id!);
                   },
                   child: _buildAction(
                     isSaved ? Icons.bookmark : Icons.bookmark_outline,

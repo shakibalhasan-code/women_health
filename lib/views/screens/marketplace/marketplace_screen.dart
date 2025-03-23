@@ -6,11 +6,11 @@ import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/utils/helper/widget_helper.dart';
 import 'package:women_health/views/screens/marketplace/components/category_item.dart';
 import 'package:women_health/views/screens/marketplace/components/product_item.dart';
-import 'package:women_health/views/screens/marketplace/payment_screen.dart';
 import 'package:women_health/views/screens/marketplace/product_details_screen.dart';
 
 class MarketplaceScreen extends StatelessWidget {
-  MarketplaceScreen({super.key});
+  MarketplaceScreen({Key? key}) : super(key: key);
+
   final marketplaceController = Get.find<MarketplaceController>();
 
   @override
@@ -22,54 +22,63 @@ class MarketplaceScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Chose category',
-                style: AppTheme.titleMedium.copyWith(color: Colors.black)),
+            Text(
+              'Choose category',
+              style: AppTheme.titleMedium.copyWith(color: Colors.black),
+            ),
             SizedBox(height: 5.h),
             Obx(() {
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: List.generate(
-                    marketplaceController.productCategories.length,
-                    (index) {
+                    marketplaceController.categories.length,
+                        (index) {
+                      final categoryName = marketplaceController.categories[index];
                       return CategoryItem(
-                        onTap: () => marketplaceController
-                            .selectedCategoryIndex.value = index,
-                        categoryName:
-                            marketplaceController.productCategories[index],
-                        isSelected: index ==
-                            marketplaceController.selectedCategoryIndex.value,
+                        onTap: () => marketplaceController.setSelectedCategory(categoryName, index), // Pass category name
+                        categoryName: categoryName,
+                        isSelected: index == marketplaceController.selectedCategoryIndex.value,
                       );
                     },
                   ),
                 ),
               );
             }),
-            SizedBox(height: 5.h),
+            SizedBox(height: 10.h),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    int crossAxisCount =
-                        (constraints.maxWidth ~/ 120).clamp(2, 4);
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 12.h,
-                        childAspectRatio: 0.70,
+              child: Obx(() {
+                if (marketplaceController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (marketplaceController.products.isEmpty) {
+                  return const Center(child: Text('No products found.'));
+                } else {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: 12.w,
+                        runSpacing: 12.h,
+                        children: List.generate(
+                          marketplaceController.products.length,
+                              (index) {
+                            final product = marketplaceController.products[index];
+                            return SizedBox(
+                              width: 180.w, // Fixed width for each product item
+                              child: ProductItem(
+                                product: product,
+                                onTap: () {
+                                  Get.to(() => ProductDetailsScreen(product: product));
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      itemCount: 20,
-                      itemBuilder: (context, index) {
-                        return ProductItem(
-                          onTap: () => Get.to(ProductDetailsScreen()),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  );
+                }
+              }),
             ),
           ],
         ),

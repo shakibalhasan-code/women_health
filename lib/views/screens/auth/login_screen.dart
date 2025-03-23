@@ -176,17 +176,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            Text('or Login with', style: AppTheme.titleSmall),
-            SizedBox(height: 8.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AuthIconWidget(iconPath: AppIcons.googleIcon),
-                SizedBox(width: 8.w),
-                AuthIconWidget(iconPath: AppIcons.fbIcon),
-              ],
-            )
+            // Text('or Login with', style: AppTheme.titleSmall),
+            // SizedBox(height: 8.h),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     AuthIconWidget(iconPath: AppIcons.googleIcon),
+            //     SizedBox(width: 8.w),
+            //     AuthIconWidget(iconPath: AppIcons.fbIcon),
+            //   ],
+            // )
           ],
         ),
       ),

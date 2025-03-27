@@ -12,90 +12,69 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.r),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              spreadRadius: 1,
+              blurRadius: 3,
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with aspect ratio
-            SizedBox(
-              height: 100,
-              width: double.infinity,
-
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(
-                  product.images.isNotEmpty
-                      ? product.images.first
-                      : 'https://via.placeholder.com/150',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Center(child: Icon(Icons.error));
-                  },
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+              child: Image.network(
+                product.images[0], // Replace with your image URL
+                height: 120.h, // Keep this for consistency
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 120.h,
+                    width: double.infinity,
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.error_outline),
+                  );
+                },
               ),
             ),
-            SizedBox(height: 8.h),
-            // Product Name
-            Text(
-              product.name,
-              style: AppTheme.titleMedium.copyWith(fontWeight: FontWeight.w600),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 4.h),
-
-            // Category Name
-            Text(
-              product.category.name,
-              style: AppTheme.titleSmall.copyWith(color: Colors.grey[600]),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Price
-                Text(
-                  '\৳${product.price.toStringAsFixed(2)}',
-                  style: AppTheme.titleMedium.copyWith(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
-
-                // Buy Now Button
-                ElevatedButton(
-                  onPressed: onTap,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    textStyle: TextStyle(fontSize: 14.sp),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
+            Expanded( // Use Expanded to dynamically fill remaining space
+              child: Padding(
+                padding: EdgeInsets.all(8.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute space evenly
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  child: const Text(
-                    'Buy Now',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      product.description,
+                      style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      '\৳${product.price.toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

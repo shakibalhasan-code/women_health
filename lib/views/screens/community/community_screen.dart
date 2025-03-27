@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -10,12 +12,18 @@ import 'package:women_health/views/screens/community/components/post_category_it
 import 'package:women_health/views/screens/community/search_screen.dart';
 import 'components/post_item.dart';
 import 'saved_post.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 
 class CommunityScreen extends StatelessWidget {
   final bool? isBack;
 
   CommunityScreen({super.key, this.isBack});
-  final communityController = Get.find<CommunityController>();
+  final communityController = Get.put(CommunityController());
+
+  Future<void> _onRefresh() async {
+    // Reload data when the user pulls down to refresh
+    await communityController.fetchPosts(); // Assuming you have a method to fetch posts
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,45 +35,74 @@ class CommunityScreen extends StatelessWidget {
           if (communityController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                headerSection(context),
-                postSection(),
-                SizedBox(height: 8.h),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(
-                      communityController.categories.length,
-                      (index) {
-                        final category = communityController.categories[index];
-                        return GestureDetector(
-                          onTap: () {
-                            communityController.setSelectedCategory(category);
-                          },
-                          child: PostCategoryItem(
-                            isSelected:
-                                communityController.selectedCategory.value ==
-                                    category,
-                            text: category,
+            return CustomRefreshIndicator(
+              onRefresh: _onRefresh,
+              builder: (context, child, controller) {
+                return AnimatedBuilder(
+                  animation: controller,
+                  builder: (BuildContext context, _) {
+                    final showIndicator = controller.isLoading; // Use isLoading instead of isRefreshing
+
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (showIndicator) //Use showIndicator instead of controller.isRefreshing || controller.isLoading
+                          CircularProgressIndicator(
+                            value: controller.value.clamp(0.0, 1.0),
                           ),
-                        );
-                      },
+                        Transform.translate(
+                          offset: Offset(0, controller.value * 100),
+                          child: child,
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  headerSection(context),
+                  postSection(context),
+                  SizedBox(height: 8.h),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        communityController.categories.length,
+                            (index) {
+                          final category = communityController.categories[index];
+                          return GestureDetector(
+                            onTap: () {
+                              communityController.setSelectedCategory(category);
+                            },
+                            child: PostCategoryItem(
+                              isSelected:
+                              communityController.selectedCategory.value ==
+                                  category,
+                              text: category,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                Expanded(child: Obx(() {
-                  final filteredPosts = communityController.getFilteredPosts();
-                  return filteredPosts.isEmpty ? Center(child: Text('Empty')) :ListView.builder(
-                    itemCount: filteredPosts.length,
-                    itemBuilder: (context, index) {
-                      return CommunityPostItem(post: filteredPosts[index]);
-                    },
-                  );
-                })),
-              ],
+                  SizedBox(height: 8.h),
+                  Expanded(
+                      child: Obx(() {
+                        final filteredPosts = communityController.getFilteredPosts();
+                        return filteredPosts.isEmpty
+                            ? Center(child: Text(context.tr('empty')))
+                            : ListView.builder(
+                          //Translated "Empty"
+                          itemCount: filteredPosts.length,
+                          itemBuilder: (context, index) {
+                            return CommunityPostItem(post: filteredPosts[index]);
+                          },
+                        );
+                      })),
+                ],
+              ),
             );
           }
         }),
@@ -73,13 +110,13 @@ class CommunityScreen extends StatelessWidget {
     );
   }
 
-  Widget postSection() {
+  Widget postSection(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Create Post',
+          Text(context.tr('create_post'), //Translated "Create Post"
               style: AppTheme.titleMedium.copyWith(
                   color: Colors.black,
                   fontSize: 18.sp,
@@ -91,8 +128,8 @@ class CommunityScreen extends StatelessWidget {
               width: double.infinity,
               child: TextField(
                 enabled: false,
-                decoration: const InputDecoration(
-                  hintText: 'Write here',
+                decoration: InputDecoration(
+                  hintText: context.tr('write_here'), //Translated "Write here"
                 ),
               ),
             ),
@@ -119,14 +156,14 @@ class CommunityScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r)),
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                  EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                   child: Row(
                     children: [
                       const Icon(Icons.search_rounded, color: Colors.black),
                       SizedBox(width: 5.w),
-                      Text('Search',
+                      Text(context.tr('search_post'), //Translated "Search"
                           style:
-                              AppTheme.titleSmall.copyWith(color: Colors.black))
+                          AppTheme.titleSmall.copyWith(color: Colors.black))
                     ],
                   ),
                 ),

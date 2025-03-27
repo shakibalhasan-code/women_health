@@ -16,15 +16,19 @@ class MarketplaceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: WidgetHelper.showAppBar(title: 'Marketplace', isBack: true),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Choose category',
-              style: AppTheme.titleMedium.copyWith(color: Colors.black),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Choose category',
+                style: AppTheme.titleMedium.copyWith(color: Colors.black),
+              ),
             ),
             SizedBox(height: 5.h),
             Obx(() {
@@ -36,9 +40,11 @@ class MarketplaceScreen extends StatelessWidget {
                         (index) {
                       final categoryName = marketplaceController.categories[index];
                       return CategoryItem(
-                        onTap: () => marketplaceController.setSelectedCategory(categoryName, index), // Pass category name
+                        onTap: () => marketplaceController.setSelectedCategory(
+                            categoryName, index),
                         categoryName: categoryName,
-                        isSelected: index == marketplaceController.selectedCategoryIndex.value,
+                        isSelected: index ==
+                            marketplaceController.selectedCategoryIndex.value,
                       );
                     },
                   ),
@@ -55,26 +61,24 @@ class MarketplaceScreen extends StatelessWidget {
                 } else {
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 12.w,
-                        runSpacing: 12.h,
-                        children: List.generate(
-                          marketplaceController.products.length,
-                              (index) {
-                            final product = marketplaceController.products[index];
-                            return SizedBox(
-                              width: 180.w, // Fixed width for each product item
-                              child: ProductItem(
-                                product: product,
-                                onTap: () {
-                                  Get.to(() => ProductDetailsScreen(product: product));
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                    child: GridView.builder(
+                      padding: EdgeInsets.zero,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: _calculateCrossAxisCount(context),
+                        childAspectRatio: 0.78, // Adjusted to prevent overflow
+                        crossAxisSpacing: 12.w,
+                        mainAxisSpacing: 12.h,
                       ),
+                      itemCount: marketplaceController.products.length,
+                      itemBuilder: (context, index) {
+                        final product = marketplaceController.products[index];
+                        return ProductItem(
+                          product: product,
+                          onTap: () {
+                            Get.to(() => ProductDetailsScreen(product: product));
+                          },
+                        );
+                      },
                     ),
                   );
                 }
@@ -84,5 +88,14 @@ class MarketplaceScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  int _calculateCrossAxisCount(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 600) {
+      return 3;
+    } else {
+      return 2;
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:menstrual_cycle_widget/ui/graphs_view/menstrual_body_temperature_graph.dart';
@@ -12,45 +13,51 @@ class AnalysisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20.h,
-              ),
-              Text(
-                'Body Temperature',
-                style: TextStyle(
-                    backgroundColor: Colors.black, color: Colors.white),
-              ),
-              MenstrualBodyTemperatureGraph(
-                bodyTemperatureUnits: BodyTemperatureUnits.celsius,
-                isShowMoreOptions: false,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Cycle Trends',
-                style: TextStyle(
-                    backgroundColor: Colors.black, color: Colors.white),
-              ),
-              MenstrualCycleTrendsGraph(
-                isShowMoreOptions: false,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Cycle Period',
-                style: TextStyle(
-                    backgroundColor: Colors.black, color: Colors.white),
-              ),
-              MenstrualCyclePeriodsGraph(
-                isShowMoreOptions: false,
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.tr("analysis")),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 20.h,
+                ),
+                Text(
+                  'Body Temperature',
+                  style: TextStyle(
+                      backgroundColor: Colors.black, color: Colors.white),
+                ),
+                MenstrualBodyTemperatureGraph(
+                  bodyTemperatureUnits: BodyTemperatureUnits.celsius,
+                  isShowMoreOptions: false,
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Cycle Trends',
+                  style: TextStyle(
+                      backgroundColor: Colors.black, color: Colors.white),
+                ),
+                MenstrualCycleTrendsGraph(
+                  isShowMoreOptions: false,
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Cycle Period',
+                  style: TextStyle(
+                      backgroundColor: Colors.black, color: Colors.white),
+                ),
+                MenstrualCyclePeriodsGraph(
+                  isShowMoreOptions: false,
+                ),
+              ],
+            ),
           ),
         ),
       ),

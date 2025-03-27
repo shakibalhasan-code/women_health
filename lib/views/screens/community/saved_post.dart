@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class SavedPostsScreen extends StatelessWidget {
                     Icon(Icons.bookmark, color: Colors.red, size: 22.sp),
                     SizedBox(width: 8.w),
                     Text(
-                      "Saved Post",
+                      context.tr('saved_post'),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -51,7 +52,7 @@ class SavedPostsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Recent",
+                  context.tr('recent'),
                   style:
                       TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),

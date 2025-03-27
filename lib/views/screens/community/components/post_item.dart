@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:women_health/controller/community_controller.dart';
+import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/views/screens/community/comment_screen.dart';
 
 import '../../../../core/models/community_post_model.dart';
@@ -19,6 +21,7 @@ class CommunityPostItem extends StatefulWidget {
 
 class _CommunityPostItemState extends State<CommunityPostItem> {
   String? currentUserId;
+  bool isExpanded = false; // Track expansion state
 
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
       return '${difference.inDays} days ago';
     } else {
       return DateFormat('MMM d, yyyy')
-          .format(dateTime); // Format date like "Dec 25, 2023"
+          .format(dateTime);
     }
   }
 
@@ -96,7 +99,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
                     ),
                   ),
                   Text(
-                    _getTimeAgo(widget.post.createdAt!), // Use the function here
+                    _getTimeAgo(widget.post.createdAt!),
                     style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                   ),
                 ],
@@ -104,13 +107,23 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
               const Spacer(),
               // Conditionally Show/Hide "Follow" Text
               if (currentUserId != widget.post.userId?.id)
-                Text(
-                  'Follow',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
+                GetBuilder<CommunityController>(
+                  builder: (controller) {
+                    final isFollowing = controller.followingUserIds.contains(widget.post.userId!.id!);
+                    return InkWell(
+                      onTap: () async {
+                        await controller.toggleFollow(widget.post.userId!.id!);
+                      },
+                      child: Text(
+                        isFollowing ? 'Following' : 'Follow',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isFollowing ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    );
+                  },
                 ),
             ],
           ),
@@ -128,16 +141,34 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
           SizedBox(height: 5.h),
 
           // Post Content
-          Text(
-            widget.post.description ?? 'No Description',
-            style: TextStyle(fontSize: 14.sp, color: Colors.black87),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            child: ConstrainedBox(
+              constraints: isExpanded
+                  ? const BoxConstraints()
+                  : const BoxConstraints(maxHeight: 40.0),
+              child: Text(
+                widget.post.description ?? 'No Description',
+                style: TextStyle(fontSize: 14.sp, color: Colors.black87),
+                softWrap: true,
+                overflow: TextOverflow.fade,
+              ),
+            ),
           ),
-          Text(
-            'More read',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.red,
-              fontWeight: FontWeight.w600,
+          InkWell(
+            onTap: () {
+              setState(() {
+                isExpanded = !isExpanded;
+              });
+            },
+            child: Text(
+              isExpanded ? 'Less' : 'More read',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
 
@@ -151,7 +182,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
               children: [
                 Image.network(
                   widget.post.image ??
-                      'https://via.placeholder.com/400x200', // Placeholder if no image
+                      'https://via.placeholder.com/400x200',
                   width: double.infinity,
                   height: 200.h,
                   fit: BoxFit.cover,
@@ -188,22 +219,24 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
                         : Icons.thumb_up_alt_outlined,
                     isLiked
                         ? 'Supported(${widget.post.totalLikes})'
-                        : 'Support(${widget.post.totalLikes})', // Update text dynamically and show total likes
+                        : 'Support(${widget.post.totalLikes})',
                     isLiked ? Colors.blue : Colors.black,
                   ),
                 );
               }),
               InkWell(
                 onTap: () => Get.to(CommentScreen(
-                  postId: widget.post.id!, comments: widget.post.comments ?? [],
+                    postId: widget.post.id!, comments: widget.post.comments ?? []
                 )),
                 child: _buildAction(
                     Icons.comment_outlined,
                     'Comment(${widget.post.totalComments})',
-                    Colors.black), // Show total comments
+                    Colors.black),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () async{
+                  await _launchShare();
+                },
                 child:
                 _buildAction(Icons.share_outlined, 'Share', Colors.black),
               ),
@@ -236,5 +269,11 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
         Text(label, style: TextStyle(fontSize: 12.sp, color: selectedColor)),
       ],
     );
+  }
+
+  Future<void> _launchShare() async {
+    if (!await launchUrl(Uri.parse(AppConstant.shareAppLink))) {
+      throw Exception('Could not launch');
+    }
   }
 }

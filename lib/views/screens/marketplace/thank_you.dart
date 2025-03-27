@@ -22,7 +22,7 @@ class ThankYouScreen extends StatelessWidget {
               ),
               SizedBox(height: 24.h),
               Text(
-                'Thank You!',
+                'thank_you'.tr, // Translated "Thank You!"
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
@@ -30,7 +30,7 @@ class ThankYouScreen extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               Text(
-                'Your order has been placed successfully. We will contact you very soon, keep using our app',
+                'order_placed_message'.tr, // Translated "Your order has been placed successfully..."
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -44,7 +44,7 @@ class ThankYouScreen extends StatelessWidget {
                 child: Padding(
                   padding:  EdgeInsets.symmetric(horizontal: 10.w
                   ),
-                  child: const Text('Back to Marketplace'),
+                  child: Text('back_to_marketplace'.tr), // Translated "Back to Marketplace"
                 ),
               ),
             ],

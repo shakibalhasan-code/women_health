@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,7 @@ class PaymentScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Payment',
+          context.tr('payment'), // Translated "Payment"
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18.sp,
@@ -43,22 +44,22 @@ class PaymentScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Product Details',
+                  context.tr('product_details'), // Translated "Product Details"
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 10.h),
-                Text('Product Name: ${product.name}'),
-                Text('Quantity: $quantity'),
-                Text('Price per unit: ৳${product.price.toStringAsFixed(2)}'),
+                Text('${context.tr('product_name')}: ${product.name}'), // Translated "Product Name"
+                Text('${context.tr('quantity')}: $quantity'), // Translated "Quantity"
+                Text('${context.tr('price_per_unit')}: ৳${product.price.toStringAsFixed(2)}'), // Translated "Price per unit"
                 Text(
-                    'Total Price: ৳${(product.price * quantity).toStringAsFixed(2)}'),
+                    '${context.tr('total_price')}: ৳${(product.price * quantity).toStringAsFixed(2)}'), // Translated "Total Price"
                 SizedBox(height: 20.h),
 
                 Text(
-                  'User Information',
+                  context.tr('user_information'), // Translated "User Information"
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
@@ -68,28 +69,28 @@ class PaymentScreen extends StatelessWidget {
 
                 _buildTextField(
                   controller.nameController,
-                  'Enter your name',
-                      (value) => value == null || value.isEmpty ? 'Name is required' : null,
+                  context.tr('enter_your_name'), // Translated "Enter your name"
+                      (value) => value == null || value.isEmpty ? context.tr('name_required') : null, // Translated "Name is required"
                 ),
                 SizedBox(height: 10.h),
 
                 _buildTextField(
                   controller.addressController,
-                  'Enter your address',
-                      (value) => value == null || value.isEmpty ? 'Address is required' : null,
+                  context.tr('enter_your_address'), // Translated "Enter your address"
+                      (value) => value == null || value.isEmpty ? context.tr('address_required') : null, // Translated "Address is required"
                 ),
                 SizedBox(height: 10.h),
                 _buildTextField(
                   controller.phoneController,
-                  'Enter your phone number',
-                      (value) => value == null || value.isEmpty ? 'Phone number is required' : null,
+                  context.tr('enter_your_phone'), // Translated "Enter your phone number"
+                      (value) => value == null || value.isEmpty ? context.tr('phone_required') : null, // Translated "Phone number is required"
                   keyboardType: TextInputType.phone,
                 ),
 
                 SizedBox(height: 20.h),
 
                 Text(
-                  'Select Method',
+                  context.tr('select_method'), // Translated "Select Method"
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
@@ -112,7 +113,7 @@ class PaymentScreen extends StatelessWidget {
                   onTap: controller.copyNumber,
                   child: Row(
                     children: [
-                      Text('Send money to: '),
+                      Text(context.tr('send_money_to')), // Translated "Send money to"
                       Text(
                         '+8801812345678',
                         style: TextStyle(
@@ -124,27 +125,27 @@ class PaymentScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 _buildTextField(
-                    controller.numberController, 'Enter your number',
-                        (value) => value == null || value.isEmpty ? 'Number is required' : null,
+                    controller.numberController, context.tr('enter_your_number'), // Translated "Enter your number"
+                        (value) => value == null || value.isEmpty ? context.tr('number_required') : null, // Translated "Number is required"
                     keyboardType: TextInputType.phone),
 
                 SizedBox(height: 10.h),
                 _buildTextField(
                   controller.transactionController,
-                  'Transaction ID',
-                      (value) => value == null || value.isEmpty ? 'Transaction ID is required' : null,
+                  context.tr('transaction_id'), // Translated "Transaction ID"
+                      (value) => value == null || value.isEmpty ? context.tr('transaction_id_required') : null, // Translated "Transaction ID is required"
                 ),
 
                 SizedBox(height: 10.h),
                 // _buildTimePickerField(context),
                 SizedBox(height: 10.h),
-                _buildNoteField(),
+                _buildNoteField(context),
                 SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _outlinedButton('Contact us'),
-                    _filledButton('Submit',
+                    _outlinedButton(context.tr('contact_us')), // Translated "Contact us"
+                    _filledButton(context.tr('submit'), // Translated "Submit"
                         onPressed: () => _submitPayment(context)),
                   ],
                 ),
@@ -210,7 +211,7 @@ class PaymentScreen extends StatelessWidget {
   //   );
   // }
 
-  Widget _buildNoteField() {
+  Widget _buildNoteField(BuildContext context) {
     return Container(
       height: 80.h,
       padding: EdgeInsets.all(10.w),
@@ -223,7 +224,7 @@ class PaymentScreen extends StatelessWidget {
         controller: controller.noteController,
         maxLines: null,
         decoration: InputDecoration(
-          hintText: 'Note (Optional)',
+          hintText: context.tr('note_optional'), // Translated "Note (Optional)"
           border: InputBorder.none,
         ),
       ),
@@ -279,7 +280,7 @@ class PaymentScreen extends StatelessWidget {
       final String? userId = prefs.getString('userId');
 
       if (userId == null) {
-        Get.snackbar('Error', 'User ID not found. Please log in again.');
+        Get.snackbar('Error', context.tr('user_id_not_found')); // Translated "User ID not found. Please log in again."
         return;
       }
 
@@ -313,13 +314,13 @@ class PaymentScreen extends StatelessWidget {
         final response = await ApiService.placeOrder(requestBody);
 
         if (response != null) {
-          Get.snackbar('Success', 'Payment submitted successfully!');
+          Get.snackbar('Success', context.tr('payment_submitted_success')); // Translated "Payment submitted successfully!"
           Get.off(ThankYouScreen()); // Replace Get.back() with Get.off
         } else {
-          Get.snackbar('Error', 'Failed to submit payment. Please try again.');
+          Get.snackbar('Error', context.tr('payment_failed')); // Translated "Failed to submit payment. Please try again."
         }
       } catch (e) {
-        Get.snackbar('Error', 'An error occurred: $e');
+        Get.snackbar('Error', context.tr('an_error_occurred') + ': $e'); // Translated "An error occurred: "
       }
     }
   }

@@ -3,6 +3,8 @@ import 'package:menstrual_cycle_widget/menstrual_cycle_widget_base.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class UserHelper extends GetxService {
   var lastPeriodDate = ''.obs;
   var periodDuration = 5.obs;
@@ -77,6 +79,20 @@ class UserHelper extends GetxService {
   void decrementStep() {
     if (completedQuestion.value > 1) {
       completedQuestion.value--;
+    }
+  }
+
+  static Future<void> openEmail(String email)async {
+    if (!await launchUrl(Uri.parse('mailto:$email'))) {
+      throw Exception('Could not launch email');
+    }
+  }
+
+  static Future<void> makeCall(String number) async {
+    final Uri url = Uri.parse('tel:$number'); // Correct scheme is 'tel:'
+
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch call');
     }
   }
 }

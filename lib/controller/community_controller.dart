@@ -35,6 +35,8 @@ class CommunityController extends GetxController {
   RxSet<String> savedPostIds =
       <String>{}.obs; // Use a Set for efficient checking
 
+  RxSet<String> followingUserIds = <String>{}.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -42,6 +44,7 @@ class CommunityController extends GetxController {
     await fetchPosts(); // Now call fetchPosts
     await fetchCategories();
     await loadSavedPosts(); // Load saved post IDs from SharedPreferences
+    await loadFollowingUsers();
   }
 
 // 🟢 1. Fetching all categories (from secured endpoint)
@@ -113,6 +116,50 @@ class CommunityController extends GetxController {
     } catch (e) {
       print('Error adding comment: $e');
       Get.snackbar('Error', 'Error adding comment: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<void> toggleFollow(String userId) async {
+    try {
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found in shared preferences');
+        Get.snackbar('Error', 'Please Login First',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      final apiUrl = '${ApiEndpoints.baseUrl}/users/follow/$userId';
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Follow status toggled successfully!');
+
+        // Update local state after successful API call
+        final isFollowing = followingUserIds.contains(userId);
+        if (isFollowing) {
+          followingUserIds.remove(userId);
+        } else {
+          followingUserIds.add(userId);
+        }
+        await saveFollowingUsers();
+
+        Get.snackbar('Success', 'Follow status toggled',
+            snackPosition: SnackPosition.BOTTOM);
+      } else {
+        print('Failed to toggle follow: ${response.statusCode} - ${response.body}');
+        Get.snackbar('Error', 'Failed to toggle follow: ${response.body}',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      print('Error toggling follow: $e');
+      Get.snackbar('Error', 'Error toggling follow: $e',
           snackPosition: SnackPosition.BOTTOM);
     }
   }
@@ -424,5 +471,16 @@ class CommunityController extends GetxController {
   // 🟢 Save Saved Posts to SharedPreferences
   Future<void> saveSavedPosts() async {
     await prefs?.setStringList('savedPosts', savedPostIds.toList());
+  }
+
+  // Load Following Users from SharedPreferences
+  Future<void> loadFollowingUsers() async {
+    final following = prefs?.getStringList('followingUsers') ?? [];
+    followingUserIds.addAll(following);
+  }
+
+  // Save Following Users to SharedPreferences
+  Future<void> saveFollowingUsers() async {
+    await prefs?.setStringList('followingUsers', followingUserIds.toList());
   }
 }

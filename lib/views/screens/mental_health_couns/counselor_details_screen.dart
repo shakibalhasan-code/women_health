@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:women_health/core/helper/user_info_helper.dart';
 import 'package:women_health/core/models/counselor_model.dart'; // Import the Counselor model
 
 class CounselorDetailsScreen extends StatelessWidget {
@@ -101,8 +102,9 @@ class CounselorDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 OutlinedButton(
-                  onPressed: () {
+                  onPressed: () async{
                     // Implement email functionality here
+                    await  UserHelper.openEmail(counselor.email);
                   },
                   style: OutlinedButton.styleFrom(
                     padding:
@@ -117,8 +119,9 @@ class CounselorDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
                     // Implement call functionality here
+                    await UserHelper.makeCall(counselor.phone);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,

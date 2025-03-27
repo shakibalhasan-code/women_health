@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/mental_health_controller.dart';
+import 'package:women_health/core/helper/user_info_helper.dart';
+import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/views/screens/mental_health_couns/meet_counsiler.dart';
 import 'package:women_health/views/screens/mental_health_couns/post_details.dart';
 import 'package:women_health/core/models/blog_model.dart'; // Import your blog model
@@ -16,7 +19,7 @@ class MentalHealthScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Text("Mental Health Counseling",
+            Text(context.tr('mental_health'),
                 style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
@@ -36,7 +39,7 @@ class MentalHealthScreen extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () => Get.to(MeetCounselorScreen()),
                   icon: Icon(Icons.people),
-                  label: Text("Meet a Counselor"),
+                  label: Text(context.tr('meet_counselor')),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     backgroundColor: Colors.grey.shade200,
@@ -45,9 +48,11 @@ class MentalHealthScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async{
+                    await UserHelper.openEmail(AppConstant.email);
+                  },
                   icon: Icon(Icons.mail),
-                  label: Text("Mail us"),
+                  label: Text(context.tr('mail_us')),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     backgroundColor: Colors.grey.shade200,
@@ -58,7 +63,7 @@ class MentalHealthScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 15.h),
-            Text("Select a category",
+            Text(context.tr('select_category'),
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 10.h),
             Obx(

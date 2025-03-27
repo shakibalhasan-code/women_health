@@ -39,7 +39,9 @@ dependencies:
   intl: ^0.19.0
   image_picker: ^1.1.2
   mime_type: ^1.0.1
-
+  url_launcher: ^6.3.1
+  easy_localization: ^3.0.7+1
+  custom_refresh_indicator: ^4.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -52,3 +54,5 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/lang/en.json
+    - assets/lang/bn.json

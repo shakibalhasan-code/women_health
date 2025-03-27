@@ -1,10 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-class LanguageController extends GetxController {
-  var selectedLanguage = 'English'.obs;
-}
+import 'package:easy_localization/easy_localization.dart' as easy;
+import '../../../controller/language_controller.dart';
 
 class LanguageScreen extends StatelessWidget {
   LanguageScreen({super.key});
@@ -14,7 +13,7 @@ class LanguageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Select Language"),
+        title: Text(context.tr('select_language')), // Translatable text
         centerTitle: true,
       ),
       body: Padding(
@@ -22,25 +21,25 @@ class LanguageScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(
-              () => ListTile(
+                  () => ListTile(
                 title: Text("English"),
                 trailing: Radio<String>(
                   value: "English",
                   groupValue: languageController.selectedLanguage.value,
                   onChanged: (value) {
-                    languageController.selectedLanguage.value = value!;
+                    languageController.changeLanguage(value!, context);
                   },
                 ),
               ),
             ),
             Obx(
-              () => ListTile(
+                  () => ListTile(
                 title: Text("Bangla"),
                 trailing: Radio<String>(
                   value: "Bangla",
                   groupValue: languageController.selectedLanguage.value,
                   onChanged: (value) {
-                    languageController.selectedLanguage.value = value!;
+                    languageController.changeLanguage(value!, context);
                   },
                 ),
               ),
@@ -60,7 +59,7 @@ class LanguageScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  "Save",
+                  context.tr('save'),
                   style: TextStyle(fontSize: 16.sp, color: Colors.white),
                 ),
               ),

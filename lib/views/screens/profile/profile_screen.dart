@@ -1,6 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:women_health/controller/intro_controller/payment_controller.dart';
+import 'package:women_health/core/models/product_model.dart';
+import 'package:women_health/views/screens/marketplace/thank_you.dart';
+import '../../../core/services/api_services.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/views/screens/profile/about_us.dart';
 import 'package:women_health/views/screens/profile/change_password.dart';
@@ -18,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: Text(context.tr("profile")), // Translated "Profile"
         centerTitle: true,
         leading: const SizedBox(),
       ),
@@ -27,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
           if (profileController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else if (profileController.profile.value == null) {
-            return const Center(child: Text('Failed to load profile.'));
+            return Center(child: Text(context.tr('failed_load_profile'))); // Translated "Failed to load profile."
           } else {
             final profile = profileController.profile.value!.user;
             return SingleChildScrollView(
@@ -53,12 +60,12 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 10.h),
                         Text(
-                          profile?.name ?? "Unknown User",
+                          profile?.name ?? context.tr("unknown_user"), // Translated "Unknown User"
                           style: TextStyle(
                               fontSize: 18.sp, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          profile?.email ?? "No Email",
+                          profile?.email ?? context.tr("no_email"), // Translated "No Email"
                           style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                         ),
                         SizedBox(height: 10.h),
@@ -66,11 +73,11 @@ class ProfileScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             profileStat(
-                                profile?.totalPosts.toString() ?? "0", "Post"),
+                                profile?.totalPosts.toString() ?? "0", context.tr("post")), // Translated "Post"
                             profileStat(
-                                profile?.totalLikes.toString() ?? "0", "Likes"),
+                                profile?.totalLikes.toString() ?? "0", context.tr("likes")), // Translated "Likes"
                             profileStat(profile?.totalComments.toString() ?? "0",
-                                "Comments"),
+                                context.tr("comments")), // Translated "Comments"
                           ],
                         ),
                         SizedBox(height: 10.h),
@@ -78,23 +85,23 @@ class ProfileScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _followStat(profile?.totalFollowers.toString() ?? "0",
-                                "Followers"),
+                                context.tr("followers")), // Translated "Followers"
                             SizedBox(width: 20.w),
                             _followStat(
                                 profile?.totalFollowing.toString() ?? "0",
-                                "Following"),
+                                context.tr("following")), // Translated "Following"
                           ],
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  profileOption(Icons.language, "Language",
+                  profileOption(Icons.language, context.tr("language"), // Translated "Language"
                       onTap: () => Get.to(LanguageScreen())),
                   Obx(
                         () => profileOption(
                       Icons.notifications,
-                      "Notification",
+                      context.tr("notification"), // Translated "Notification"
                       trailing: Switch(
                         value: profileController.isNotificationEnabled.value,
                         onChanged: (bool value) {
@@ -104,11 +111,11 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  profileOption(Icons.info, "About us",
+                  profileOption(Icons.info, context.tr("about_us"), // Translated "About us"
                       onTap: () => Get.to(AboutUsScreen())),
-                  profileOption(Icons.lock, "Change password",
+                  profileOption(Icons.lock, context.tr("change_pass"), // Translated "Change password"
                       onTap: () => Get.to(ChangePasswordScreen())),
-                  profileOption(Icons.logout, "Log out",
+                  profileOption(Icons.logout, context.tr("log_out"), // Translated "Log out"
                       color: Colors.red,
                       onTap: () => _showLogoutDialog(context)),
                 ],
@@ -124,19 +131,19 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Logout"),
-        content: const Text("Are you sure you want to logout?"),
+        title: Text(context.tr("log_out")), // Translated "Logout"
+        content: Text(context.tr("logout_confirmation")), // Translated "Are you sure you want to logout?"
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text(context.tr("cancel")), // Translated "Cancel"
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               // Implement logout logic here
             },
-            child: const Text("Logout", style: TextStyle(color: Colors.red)),
+            child: Text(context.tr("log_out"), style: TextStyle(color: Colors.red)), // Translated "Logout"
           ),
         ],
       ),

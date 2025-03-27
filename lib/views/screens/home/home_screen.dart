@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,9 +52,9 @@ class HomeScreen extends StatelessWidget {
 
               OutlinedButton(
                   onPressed: () => Get.to(EditPeriodScreen()),
-                  child: Text('Edit Period')),
+                  child: Text(context.tr('edit_period'))),
               SizedBox(height: 10.h),
-              _buildGridCards(),
+              _buildGridCards(context),
             ],
           ),
         ),
@@ -61,19 +62,19 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget bodyPeriodContainer() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
-      child: Column(children: [
-        SizedBox(
-          height: 15.h,
-        ),
-        OutlinedButton(
-            onPressed: () => Get.to(EditPeriodScreen()),
-            child: Text('Edit Period'))
-      ]),
-    );
-  }
+  // Widget bodyPeriodContainer() {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(horizontal: 10.w),
+  //     child: Column(children: [
+  //       SizedBox(
+  //         height: 15.h,
+  //       ),
+  //       OutlinedButton(
+  //           onPressed: () => Get.to(EditPeriodScreen()),
+  //           child: Text('Edit Period'))
+  //     ]),
+  //   );
+  // }
 
   AppBar buildAppBar() {
     return AppBar(
@@ -123,7 +124,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGridCards() {
+  Widget _buildGridCards(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Column(
@@ -137,8 +138,8 @@ class HomeScreen extends StatelessWidget {
                 child: Expanded(
                   child: HomeCardWidget(
                     iconPath: AppIcons.communityIcon,
-                    title: 'Community Forum',
-                    subTitle: 'Conversation & take control of your health',
+                    title: context.tr('community_forum'),
+                    subTitle: context.tr('community_forum_sub'),
                     cardColor: Colors.blue.withOpacity(0.1),
                     borderColor: AppTheme.blue,
                     iconColor: AppTheme.blue,
@@ -151,8 +152,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => Get.to(MarketplaceScreen()),
                   child: HomeCardWidget(
                     iconPath: AppIcons.shopIcon,
-                    title: 'Shopping',
-                    subTitle: 'From here now',
+                    title: context.tr('shopping'),
+                    subTitle: context.tr('shopping_sub'),
                     cardColor: AppTheme.primaryColor.withOpacity(0.2),
                     borderColor: AppTheme.primaryColor,
                     iconColor: Colors.black,
@@ -169,8 +170,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => Get.to(MentalHealthScreen()),
                   child: HomeCardWidget(
                     iconPath: AppIcons.mentalHealthIcon,
-                    title: 'Mental Health Counselling',
-                    subTitle: 'Expert guidance for your well-being',
+                    title: context.tr('mental_health'),
+                    subTitle: context.tr('mental_health_sub'),
                     cardColor: AppTheme.yelloward,
                     borderColor: Colors.yellow,
                     iconColor: Colors.yellow,
@@ -183,8 +184,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => Get.to(BlogScreen()),
                   child: HomeCardWidget(
                     iconPath: AppIcons.newsIcon,
-                    title: 'Blog',
-                    subTitle: 'Read our daily blog post',
+                    title: context.tr('blog'),
+                    subTitle: context.tr('blog_sub'),
                     cardColor: AppTheme.greenCard,
                     borderColor: Colors.green,
                     iconColor: Colors.green,

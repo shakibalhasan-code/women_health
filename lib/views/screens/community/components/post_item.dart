@@ -104,7 +104,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
                   ),
                 ],
               ),
-              const Spacer(),
+              SizedBox(width: 5.w),
               // Conditionally Show/Hide "Follow" Text
               if (currentUserId != widget.post.userId?.id)
                 GetBuilder<CommunityController>(
@@ -125,6 +125,19 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
                     );
                   },
                 ),
+              const Spacer(),
+              if (currentUserId != widget.post.userId?.id)
+              Row(
+                children: [
+                  IconButton(onPressed: ()async{
+                    await  communityController.postEdit(widget.post.id!);
+                  }, icon: Icon(Icons.edit,color: Colors.grey,)),
+                  SizedBox(width: 5.w),
+                  IconButton(onPressed: ()async{
+                   await  communityController.postDelete(widget.post.id!);
+                  }, icon: Icon(Icons.delete,color: Colors.grey,)),
+                ],
+              )
             ],
           ),
           SizedBox(height: 10.h),

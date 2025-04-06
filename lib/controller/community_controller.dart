@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart'; // For MediaType
+import 'package:women_health/utils/helper/widget_helper.dart';
+import 'package:women_health/utils/widgets/custom_snackbar.dart';
 import '../core/models/community_post_model.dart';
 import 'package:mime_type/mime_type.dart';
 
@@ -29,13 +31,18 @@ class CommunityController extends GetxController {
 
   // Search-related variables
   RxList<CommunityPostModel> searchResults = <CommunityPostModel>[].obs;
-
+var isUpdating = false.obs;
 
   // Saved posts
   RxSet<String> savedPostIds =
       <String>{}.obs; // Use a Set for efficient checking
 
   RxSet<String> followingUserIds = <String>{}.obs;
+
+  final editTitleController = TextEditingController();
+  final editDescriptionController = TextEditingController();
+
+
 
   @override
   void onInit() async {
@@ -73,6 +80,65 @@ class CommunityController extends GetxController {
       }
     } catch (e) {
       print('Error fetching categories: $e');
+    }
+  }
+
+  Future<void> postEdit(String postId)async{
+    try{
+      isUpdating.value = true;
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found in shared preferences');
+        Get.snackbar('Error', 'Please Login First',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+      final request = await http.put(Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'), headers: {
+        "Authorization": "Bearer $token"
+      });
+      final response = jsonDecode(request.body);
+
+      if(request.statusCode == 200){
+        Get.snackbar('Success', response['message']);
+        refresh();
+      }else {
+
+        Get.snackbar('Failed', response['message']);
+      }
+
+    }catch(e){
+      throw Exception('error $e');
+    }finally{
+      isUpdating.value = false;
+
+    }
+  }
+
+  Future<void> postDelete(String postId)async{
+    try{
+      final token = prefs?.getString('token');
+      if (token == null) {
+        print('No token found in shared preferences');
+        Get.snackbar('Error', 'Please Login First',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+      final request = await http.delete(Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'), headers: {
+        "Authorization": "Bearer $token"
+      });
+      final response = jsonDecode(request.body);
+
+      if(request.statusCode == 200){
+        Get.snackbar('Success', response['message']);
+        refresh();
+
+      }else {
+
+        Get.snackbar('Failed', response['message']);
+      }
+
+    }catch(e){
+      throw Exception('error $e');
     }
   }
 

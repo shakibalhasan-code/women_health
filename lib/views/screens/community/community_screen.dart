@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/utils/constant/app_icons.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
@@ -22,7 +23,8 @@ class CommunityScreen extends StatelessWidget {
 
   Future<void> _onRefresh() async {
     // Reload data when the user pulls down to refresh
-    await communityController.fetchPosts(); // Assuming you have a method to fetch posts
+    await communityController
+        .fetchPosts(); // Assuming you have a method to fetch posts
   }
 
   @override
@@ -30,6 +32,18 @@ class CommunityScreen extends StatelessWidget {
     return Scaffold(
       appBar: isBack == true ? AppBar() : null,
       backgroundColor: Colors.white,
+      // bottomNavigationBar: communityController.bannerAd != null
+      //     ? Align(
+      //         alignment: Alignment.bottomCenter,
+      //         child: SafeArea(
+      //           child: SizedBox(
+      //             width: communityController.bannerAd!.size.width.toDouble(),
+      //             height: communityController.bannerAd!.size.height.toDouble(),
+      //             child: AdWidget(ad: communityController.bannerAd!),
+      //           ),
+      //         ),
+      //       )
+      //     : SizedBox(),
       body: SafeArea(
         child: Obx(() {
           if (communityController.isLoading.value) {
@@ -41,7 +55,8 @@ class CommunityScreen extends StatelessWidget {
                 return AnimatedBuilder(
                   animation: controller,
                   builder: (BuildContext context, _) {
-                    final showIndicator = controller.isLoading; // Use isLoading instead of isRefreshing
+                    final showIndicator = controller
+                        .isLoading; // Use isLoading instead of isRefreshing
 
                     return Stack(
                       alignment: Alignment.center,
@@ -70,16 +85,17 @@ class CommunityScreen extends StatelessWidget {
                     child: Row(
                       children: List.generate(
                         communityController.categories.length,
-                            (index) {
-                          final category = communityController.categories[index];
+                        (index) {
+                          final category =
+                              communityController.categories[index];
                           return GestureDetector(
                             onTap: () {
                               communityController.setSelectedCategory(category);
                             },
                             child: PostCategoryItem(
                               isSelected:
-                              communityController.selectedCategory.value ==
-                                  category,
+                                  communityController.selectedCategory.value ==
+                                      category,
                               text: category,
                             ),
                           );
@@ -88,19 +104,20 @@ class CommunityScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8.h),
-                  Expanded(
-                      child: Obx(() {
-                        final filteredPosts = communityController.getFilteredPosts();
-                        return filteredPosts.isEmpty
-                            ? Center(child: Text(context.tr('empty')))
-                            : ListView.builder(
-                          //Translated "Empty"
-                          itemCount: filteredPosts.length,
-                          itemBuilder: (context, index) {
-                            return CommunityPostItem(post: filteredPosts[index]);
-                          },
-                        );
-                      })),
+                  Expanded(child: Obx(() {
+                    final filteredPosts =
+                        communityController.getFilteredPosts();
+                    return filteredPosts.isEmpty
+                        ? Center(child: Text(context.tr('empty')))
+                        : ListView.builder(
+                            //Translated "Empty"
+                            itemCount: filteredPosts.length,
+                            itemBuilder: (context, index) {
+                              return CommunityPostItem(
+                                  post: filteredPosts[index]);
+                            },
+                          );
+                  })),
                 ],
               ),
             );
@@ -156,14 +173,14 @@ class CommunityScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r)),
                 child: Padding(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                   child: Row(
                     children: [
                       const Icon(Icons.search_rounded, color: Colors.black),
                       SizedBox(width: 5.w),
                       Text(context.tr('search_post'), //Translated "Search"
                           style:
-                          AppTheme.titleSmall.copyWith(color: Colors.black))
+                              AppTheme.titleSmall.copyWith(color: Colors.black))
                     ],
                   ),
                 ),

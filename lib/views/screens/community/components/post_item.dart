@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:women_health/controller/community_controller.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/views/screens/community/comment_screen.dart';
+import 'package:women_health/views/screens/community/edit_screen.dart';
 
 import '../../../../core/models/community_post_model.dart';
 
@@ -37,7 +38,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
   }
 
   final CommunityController communityController =
-  Get.find<CommunityController>();
+      Get.find<CommunityController>();
 
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
@@ -52,8 +53,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
     } else if (difference.inDays < 7) {
       return '${difference.inDays} days ago';
     } else {
-      return DateFormat('MMM d, yyyy')
-          .format(dateTime);
+      return DateFormat('MMM d, yyyy').format(dateTime);
     }
   }
 
@@ -109,7 +109,8 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
               if (currentUserId != widget.post.userId?.id)
                 GetBuilder<CommunityController>(
                   builder: (controller) {
-                    final isFollowing = controller.followingUserIds.contains(widget.post.userId!.id!);
+                    final isFollowing = controller.followingUserIds
+                        .contains(widget.post.userId!.id!);
                     return InkWell(
                       onTap: () async {
                         await controller.toggleFollow(widget.post.userId!.id!);
@@ -126,18 +127,30 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
                   },
                 ),
               const Spacer(),
-              if (currentUserId != widget.post.userId?.id)
-              Row(
-                children: [
-                  IconButton(onPressed: ()async{
-                    await  communityController.postEdit(widget.post.id!);
-                  }, icon: Icon(Icons.edit,color: Colors.grey,)),
-                  SizedBox(width: 5.w),
-                  IconButton(onPressed: ()async{
-                   await  communityController.postDelete(widget.post.id!);
-                  }, icon: Icon(Icons.delete,color: Colors.grey,)),
-                ],
-              )
+              if (currentUserId == widget.post.userId?.id)
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () async {
+                          Get.to(() => EditPostScreen(
+                                post: widget.post,
+                              ));
+                        },
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.grey,
+                        )),
+                    SizedBox(width: 5.w),
+                    IconButton(
+                        onPressed: () async {
+                          await communityController.postDelete(widget.post.id!);
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.grey,
+                        )),
+                  ],
+                )
             ],
           ),
           SizedBox(height: 10.h),
@@ -194,8 +207,7 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
               alignment: Alignment.center,
               children: [
                 Image.network(
-                  widget.post.image ??
-                      'https://via.placeholder.com/400x200',
+                  widget.post.image ?? 'https://via.placeholder.com/400x200',
                   width: double.infinity,
                   height: 200.h,
                   fit: BoxFit.cover,
@@ -219,9 +231,9 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GetBuilder<CommunityController>(builder: (controller) {
-                final isLiked =
-                    widget.post.likes?.any((like) => like.id == currentUserId) ??
-                        false;
+                final isLiked = widget.post.likes
+                        ?.any((like) => like.id == currentUserId) ??
+                    false;
                 return InkWell(
                   onTap: () {
                     communityController.toggleLike(widget.post);
@@ -239,23 +251,21 @@ class _CommunityPostItemState extends State<CommunityPostItem> {
               }),
               InkWell(
                 onTap: () => Get.to(CommentScreen(
-                    postId: widget.post.id!, comments: widget.post.comments ?? []
-                )),
-                child: _buildAction(
-                    Icons.comment_outlined,
-                    'Comment(${widget.post.totalComments})',
-                    Colors.black),
+                    postId: widget.post.id!,
+                    comments: widget.post.comments ?? [])),
+                child: _buildAction(Icons.comment_outlined,
+                    'Comment(${widget.post.totalComments})', Colors.black),
               ),
               InkWell(
-                onTap: () async{
+                onTap: () async {
                   await _launchShare();
                 },
                 child:
-                _buildAction(Icons.share_outlined, 'Share', Colors.black),
+                    _buildAction(Icons.share_outlined, 'Share', Colors.black),
               ),
               GetBuilder<CommunityController>(builder: (controller) {
                 final isSaved =
-                communityController.savedPostIds.contains(widget.post.id);
+                    communityController.savedPostIds.contains(widget.post.id);
                 return InkWell(
                   onTap: () {
                     communityController.toggleSavePost(widget.post.id!);

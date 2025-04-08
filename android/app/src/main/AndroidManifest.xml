@@ -2,13 +2,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="women_health"
+        android:label="Nirbhoya"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
+                android:debuggable="true"
+
             android:requestLegacyExternalStorage="true"
             android:enableOnBackInvokedCallback="true"
             android:taskAffinity=""
@@ -24,6 +26,11 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+                  <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+
+              <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -1,7 +1,7 @@
 class ApiEndpoints {
   ///main
-  // static String baseUrl = 'http://localhost:5000/api';
-  static String baseUrl = 'http://192.168.0.189:5000/api';
+  // static String baseUrl = 'http://localhost:5050/api';
+  static String baseUrl = 'http://192.168.0.196:5050/api';
   static String url = 'http://localhost:3000';
 
   ///auth

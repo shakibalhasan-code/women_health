@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
@@ -31,7 +32,7 @@ class CommunityController extends GetxController {
 
   // Search-related variables
   RxList<CommunityPostModel> searchResults = <CommunityPostModel>[].obs;
-var isUpdating = false.obs;
+  var isUpdating = false.obs;
 
   // Saved posts
   RxSet<String> savedPostIds =
@@ -39,10 +40,14 @@ var isUpdating = false.obs;
 
   RxSet<String> followingUserIds = <String>{}.obs;
 
+  // BannerAd? bannerAd;
+  // bool _isLoaded = false;
+
   final editTitleController = TextEditingController();
   final editDescriptionController = TextEditingController();
 
-
+// TODO: replace this test ad unit with your own ad unit.
+  final adUnitId = 'ca-app-pub-3940256099942544/6300978111';
 
   @override
   void onInit() async {
@@ -52,6 +57,7 @@ var isUpdating = false.obs;
     await fetchCategories();
     await loadSavedPosts(); // Load saved post IDs from SharedPreferences
     await loadFollowingUsers();
+    // await showBannerAds();
   }
 
 // 🟢 1. Fetching all categories (from secured endpoint)
@@ -72,7 +78,7 @@ var isUpdating = false.obs;
         final jsonData = json.decode(response.body);
         final List<dynamic> categoryList = jsonData['categories'];
         final List<String> fetchedNames =
-        categoryList.map((e) => e['name'].toString()).toList();
+            categoryList.map((e) => e['name'].toString()).toList();
 
         categories.addAll(fetchedNames);
       } else {
@@ -83,9 +89,10 @@ var isUpdating = false.obs;
     }
   }
 
-  Future<void> postEdit(String postId)async{
-    try{
+  Future<void> postEdit(String postId) async {
+    try {
       isUpdating.value = true;
+
       final token = prefs?.getString('token');
       if (token == null) {
         print('No token found in shared preferences');
@@ -93,29 +100,32 @@ var isUpdating = false.obs;
             snackPosition: SnackPosition.BOTTOM);
         return;
       }
-      final request = await http.put(Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'), headers: {
-        "Authorization": "Bearer $token"
-      });
-      final response = jsonDecode(request.body);
 
-      if(request.statusCode == 200){
-        Get.snackbar('Success', response['message']);
+      final response = await http.put(
+        Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json", // optional, but good to include
+        },
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', data['message'] ?? 'Post updated');
         refresh();
-      }else {
-
-        Get.snackbar('Failed', response['message']);
+      } else {
+        Get.snackbar('Failed', data['message'] ?? 'Something went wrong');
       }
-
-    }catch(e){
-      throw Exception('error $e');
-    }finally{
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    } finally {
       isUpdating.value = false;
-
     }
   }
 
-  Future<void> postDelete(String postId)async{
-    try{
+  Future<void> postDelete(String postId) async {
+    try {
       final token = prefs?.getString('token');
       if (token == null) {
         print('No token found in shared preferences');
@@ -123,22 +133,25 @@ var isUpdating = false.obs;
             snackPosition: SnackPosition.BOTTOM);
         return;
       }
-      final request = await http.delete(Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'), headers: {
-        "Authorization": "Bearer $token"
-      });
-      final response = jsonDecode(request.body);
 
-      if(request.statusCode == 200){
-        Get.snackbar('Success', response['message']);
+      final response = await http.delete(
+        Uri.parse('${ApiEndpoints.baseUrl}/Posts/$postId'),
+        headers: {
+          "Authorization": token,
+          "Content-Type": "application/json",
+        },
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Get.snackbar('Success', data['message'] ?? 'Post deleted');
         refresh();
-
-      }else {
-
-        Get.snackbar('Failed', response['message']);
+      } else {
+        Get.snackbar('Failed', data['message'] ?? 'Something went wrong');
       }
-
-    }catch(e){
-      throw Exception('error $e');
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
     }
   }
 
@@ -175,7 +188,8 @@ var isUpdating = false.obs;
         Get.snackbar('Success', 'Comment Added Successfully',
             snackPosition: SnackPosition.BOTTOM);
       } else {
-        print('Failed to add comment: ${response.statusCode} - ${response.body}');
+        print(
+            'Failed to add comment: ${response.statusCode} - ${response.body}');
         Get.snackbar('Error', 'Failed to add comment: ${response.body}',
             snackPosition: SnackPosition.BOTTOM);
       }
@@ -219,7 +233,8 @@ var isUpdating = false.obs;
         Get.snackbar('Success', 'Follow status toggled',
             snackPosition: SnackPosition.BOTTOM);
       } else {
-        print('Failed to toggle follow: ${response.statusCode} - ${response.body}');
+        print(
+            'Failed to toggle follow: ${response.statusCode} - ${response.body}');
         Get.snackbar('Error', 'Failed to toggle follow: ${response.body}',
             snackPosition: SnackPosition.BOTTOM);
       }
@@ -351,7 +366,7 @@ var isUpdating = false.obs;
 
       // Create multipart request
       var request =
-      http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
+          http.MultipartRequest('POST', Uri.parse(ApiEndpoints.createPost));
       request.headers['Authorization'] = 'Bearer $token'; // Add token to header
       request.fields['title'] = titleController.value.text;
       request.fields['description'] = descriptionController.value.text;
@@ -482,9 +497,6 @@ var isUpdating = false.obs;
     }
   }
 
-
-
-
   // 🟢 Save Post Logic
   Future<void> toggleSavePost(String postId) async {
     final bool isCurrentlySaved = savedPostIds.contains(postId);
@@ -548,5 +560,42 @@ var isUpdating = false.obs;
   // Save Following Users to SharedPreferences
   Future<void> saveFollowingUsers() async {
     await prefs?.setStringList('followingUsers', followingUserIds.toList());
+  }
+
+  @override
+  Future<void> refresh() async {
+    await fetchPosts();
+    await fetchCategories();
+  }
+
+  // Future<void> showBannerAds() async {
+  //   // Implement your banner ad logic here
+  //   // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
+  //   final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+  //       MediaQuery.sizeOf(Get.context!).width.truncate());
+
+  //   bannerAd = BannerAd(
+  //     adUnitId: adUnitId,
+  //     request: const AdRequest(),
+  //     size:
+  //         size ?? AdSize.banner, // Fallback to a default AdSize if size is null
+  //     listener: BannerAdListener(
+  //       // Called when an ad is successfully received.
+  //       onAdLoaded: (ad) {
+  //         debugPrint('$ad loaded.');
+  //         _isLoaded = true;
+  //       },
+  //       // Called when an ad request failed.
+  //       onAdFailedToLoad: (ad, err) {
+  //         debugPrint('BannerAd failed to load: $err');
+  //         // Dispose the ad here to free resources.
+  //         ad.dispose();
+  //       },
+  //     ),
+  //   )..load();
+  // }
+
+  Future<void> showInterstitialAds() async {
+    // Implement your interstitial ad logic here
   }
 }

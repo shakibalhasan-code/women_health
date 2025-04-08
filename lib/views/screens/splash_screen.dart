@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/controller/auth_controller.dart';
 import 'package:women_health/controller/intro_controller/intro_controller.dart'; // Import the QuestionnaireController
@@ -53,7 +54,23 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(), // Your splash screen UI
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 150.w,
+              height: 150,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.r),
+                  child: Image.asset('assets/images/logo.png')),
+            ),
+            SizedBox(
+              height: 15.h,
+            ),
+            CircularProgressIndicator()
+          ],
+        ), // Your splash screen UI
       ),
     );
   }

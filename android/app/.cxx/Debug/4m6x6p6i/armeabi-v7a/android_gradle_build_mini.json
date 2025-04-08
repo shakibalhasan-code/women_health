@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/sah/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/sah/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/sah/nirbhoya/mobile/women_health/android/app/.cxx/Debug/4m6x6p6i/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/sah/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/sah/nirbhoya/mobile/women_health/android/app/.cxx/Debug/4m6x6p6i/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

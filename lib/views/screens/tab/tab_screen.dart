@@ -14,25 +14,28 @@ class TabScreen extends StatelessWidget {
     final _tabController = Get.find<MyTabController>();
 
     return Scaffold(
-      body: Obx(()=> _tabController.screen[_tabController.currentIndex.value]),
+      body: Obx(() => _tabController.screen[_tabController.currentIndex.value]),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.defaultRadius),)
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-          child: GNav(
-            activeColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-            color: Colors.grey,
-            tabBackgroundColor:AppTheme.primaryColor,
-            rippleColor: AppTheme.primaryColor,
-            gap: 5,
-            style: GnavStyle.google,
-            onTabChange: (index){
-              _tabController.changeTab(index);
-            },
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppTheme.defaultRadius),
+            )),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: GNav(
+              activeColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              color: Colors.grey,
+              tabBackgroundColor: AppTheme.primaryColor,
+              rippleColor: AppTheme.primaryColor,
+              gap: 5,
+              style: GnavStyle.google,
+              onTabChange: (index) {
+                _tabController.changeTab(index);
+              },
               tabs: [
                 buildGButton(Icons.home_filled, 'Home'),
                 buildGButton(Icons.calendar_month_rounded, 'Calender'),
@@ -40,18 +43,17 @@ class TabScreen extends StatelessWidget {
                 buildGButton(Icons.analytics_rounded, 'Analysis'),
                 buildGButton(Icons.person, 'Profile'),
               ],
-            selectedIndex: _tabController.currentIndex.value,
-
+              selectedIndex: _tabController.currentIndex.value,
+            ),
           ),
         ),
       ),
     );
   }
 
-
   GButton buildGButton(IconData icon, String label) => GButton(
-    icon: icon,
-    text: label,style: GnavStyle.google, // If your GButton supports text
-    // ... other GButton properties
-  );
+        icon: icon,
+        text: label, style: GnavStyle.google, // If your GButton supports text
+        // ... other GButton properties
+      );
 }

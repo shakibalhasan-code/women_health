@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart'; // Import the package
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +21,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _selectedImageIndex = 0;
   int _quantity = 1;
 
+  // Define your base URL for images if product.images contains relative paths
+  // If product.images already contains full URLs, you can set this to an empty string
+  // or remove the concatenation later.
+  final String imageBaseUrl = 'http://178.16.137.209:5000/'; // Example base URL
+
   void _increaseQuantity() {
     setState(() {
       _quantity++;
@@ -34,6 +40,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
+  String _getImageUrl(String imagePath) {
+    // Check if the imagePath is already a full URL
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    // Otherwise, prepend the base URL
+    return imageBaseUrl + imagePath;
+  }
+
   @override
   Widget build(BuildContext context) {
     final String heroTag = 'product-image-${widget.product.id}';
@@ -45,11 +60,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 320.h, // Slightly more height for image
+                expandedHeight: 320.h,
                 pinned: true,
                 stretch: true,
                 backgroundColor: Colors.white,
-                elevation: 1, // Subtle elevation when pinned
+                elevation: 1,
                 leading: IconButton(
                   icon: Container(
                     padding: EdgeInsets.all(6.r),
@@ -67,34 +82,36 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   background: Hero(
                     tag: heroTag,
                     child: (widget.product.images.isNotEmpty)
-                        ? Image.network(
-                            widget.product.images[_selectedImageIndex],
+                        ? CachedNetworkImage(
+                            // Use the selected image from the product's image list
+                            imageUrl: _getImageUrl(
+                                widget.product.images[_selectedImageIndex]),
                             fit: BoxFit.cover,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppTheme.primaryColor),
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.network(
-                                  'https://via.placeholder.com/300x300.png?text=Image+Not+Found',
-                                  fit: BoxFit.cover); // Fallback
-                            },
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppTheme.primaryColor),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Center(
+                              child: Icon(Icons.error_outline,
+                                  color: Colors.red, size: 50.sp),
+                            ),
                           )
-                        : Image.network(
+                        : CachedNetworkImage(
                             // Fallback if product.images is empty
-                            'https://via.placeholder.com/300x300.png?text=No+Image',
+                            imageUrl:
+                                'https://via.placeholder.com/300x300.png?text=No+Image',
                             fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppTheme.primaryColor),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => const Center(
+                                child: Icon(Icons.broken_image_outlined,
+                                    color: Colors.grey)),
                           ),
                   ),
                 ),
@@ -156,16 +173,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8.r),
-                                    child: Image.network(
-                                      widget.product.images[index],
+                                    child: CachedNetworkImage(
+                                      imageUrl: _getImageUrl(
+                                          widget.product.images[index]),
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Center(
-                                            child: Icon(
-                                                Icons.broken_image_outlined,
-                                                color: Colors.grey));
-                                      },
+                                      placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.0,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  AppTheme.primaryColor),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Center(
+                                              child: Icon(
+                                                  Icons.broken_image_outlined,
+                                                  color: Colors.grey)),
                                     ),
                                   ),
                                 ),
@@ -181,8 +205,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         '\৳${widget.product.price.toStringAsFixed(2)}', // Unit Price
                         style: AppTheme.titleLarge.copyWith(
                           color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w700, // Bolder
-                          fontSize: 24.sp, // Larger
+                          fontWeight: FontWeight.w700,
+                          fontSize: 24.sp,
                         ),
                       ),
                       SizedBox(height: 16.h),
@@ -202,7 +226,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         style: AppTheme.titleSmall.copyWith(
                           color: Colors.grey[800],
                           fontSize: 14.sp,
-                          height: 1.5, // For better readability
+                          height: 1.5,
                         ),
                       ),
                       SizedBox(height: 24.h),
@@ -255,8 +279,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                          height: 90.h), // Space for the floating button bar
+                      SizedBox(height: 90.h),
                     ],
                   ),
                 ),
@@ -272,9 +295,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h)
                   .copyWith(
-                      bottom: 10.h +
-                          MediaQuery.of(context).padding.bottom *
-                              0.6), // Handle safe area
+                      bottom:
+                          10.h + MediaQuery.of(context).padding.bottom * 0.6),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -284,7 +306,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     offset: const Offset(0, -3),
                   ),
                 ],
-                // border: Border(top: BorderSide(color: Colors.grey[300]!, width: 0.5)) // Optional top border
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -302,7 +323,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ));
                 },
                 child: Text(
-                  // Using easy_localization and showing total price
                   "${context.tr('buy_now')}  |  \৳${(widget.product.price * _quantity).toStringAsFixed(2)}",
                   style: AppTheme.titleMedium.copyWith(
                     color: Colors.white,

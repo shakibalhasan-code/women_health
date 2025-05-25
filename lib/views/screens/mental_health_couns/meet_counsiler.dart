@@ -69,7 +69,7 @@ class MeetCounselorScreen extends StatelessWidget {
   }
 
   Widget _buildCounselorItem(Counselor counselor) {
-    String baseUrl = ApiEndpoints.baseUrl;
+    String baseUrl = ApiEndpoints.url;
     String fullImageUrl = counselor.image.isNotEmpty
         ? '$baseUrl/${counselor.image}'
         : 'https://via.placeholder.com/150';

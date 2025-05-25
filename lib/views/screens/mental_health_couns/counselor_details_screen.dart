@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:women_health/core/helper/user_info_helper.dart';
-import 'package:women_health/core/models/counselor_model.dart'; // Import the Counselor model
+import 'package:women_health/core/models/counselor_model.dart';
+import 'package:women_health/utils/constant/api_endpoints.dart'; // Import the Counselor model
 
 class CounselorDetailsScreen extends StatelessWidget {
   final Counselor counselor;
@@ -48,8 +49,8 @@ class CounselorDetailsScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 30.r,
-                  backgroundImage:
-                      NetworkImage(counselor.image), // Use Counselor's image
+                  backgroundImage: NetworkImage(
+                      '${ApiEndpoints.url}/${counselor.image}'), // Use Counselor's image
                   onBackgroundImageError: (exception, stackTrace) {
                     print(
                         'Error loading image for ${counselor.name}: $exception');
@@ -102,9 +103,9 @@ class CounselorDetailsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 OutlinedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     // Implement email functionality here
-                    await  UserHelper.openEmail(counselor.email);
+                    await UserHelper.openEmail(counselor.email);
                   },
                   style: OutlinedButton.styleFrom(
                     padding:
@@ -119,7 +120,7 @@ class CounselorDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     // Implement call functionality here
                     await UserHelper.makeCall(counselor.phone);
                   },

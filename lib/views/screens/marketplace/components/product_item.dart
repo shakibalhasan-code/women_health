@@ -1,4 +1,5 @@
 // views/screens/marketplace/components/product_item.dart
+import 'package:cached_network_image/cached_network_image.dart'; // Import the package
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:women_health/core/models/product_model.dart'; // Ensure this path is correct
@@ -8,14 +9,32 @@ class ProductItem extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
 
+  // Define your base URL for images if product.images contains relative paths
+  // If product.images already contains full URLs, you can set this to an empty string
+  // or remove the concatenation later.
+  final String imageBaseUrl = 'http://178.16.137.209:5000/'; // Example base URL
+
   const ProductItem({
     Key? key,
     required this.product,
     required this.onTap,
   }) : super(key: key);
 
+  String _getImageUrl(String imagePath) {
+    // Check if the imagePath is already a full URL
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    // Otherwise, prepend the base URL
+    return imageBaseUrl + imagePath;
+  }
+
   @override
   Widget build(BuildContext context) {
+    String imageUrl = product.images.isNotEmpty
+        ? _getImageUrl(product.images[0]) // Use the helper to get full URL
+        : 'https://via.placeholder.com/150?text=No+Image'; // Fallback URL
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -35,34 +54,22 @@ class ProductItem extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(12.r)),
-                  child: Image.network(
-                    product.images.isNotEmpty
-                        ? product.images[0]
-                        : 'https://via.placeholder.com/150',
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        child: Center(
-                            child: Icon(Icons.broken_image_outlined,
-                                color: Colors.grey[400], size: 40.sp)),
-                      );
-                    },
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.primaryColor),
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.primaryColor),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: Center(
+                          child: Icon(Icons.broken_image_outlined,
+                              color: Colors.grey[400], size: 40.sp)),
+                    ),
                   ),
                 ),
               ),

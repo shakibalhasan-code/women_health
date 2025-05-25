@@ -131,11 +131,11 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              InkWell(
-                onTap: () => Get.to(CommunityScreen(
-                  isBack: true,
-                )),
-                child: Expanded(
+              Expanded(
+                child: InkWell(
+                  onTap: () => Get.to(CommunityScreen(
+                    isBack: true,
+                  )),
                   child: HomeCardWidget(
                     iconPath: AppIcons.communityIcon,
                     title: context.tr('community_forum'),

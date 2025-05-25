@@ -3,16 +3,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/api_endpoints.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http_parser/http_parser.dart'; // For MediaType
+import 'package:http_parser/http_parser.dart';
 import 'package:women_health/utils/helper/widget_helper.dart';
 import 'package:women_health/utils/widgets/custom_snackbar.dart';
 import '../core/models/community_post_model.dart';
-import 'package:mime_type/mime_type.dart';
 
 class CommunityController extends GetxController {
   RxList<String> categories = <String>["All"].obs;

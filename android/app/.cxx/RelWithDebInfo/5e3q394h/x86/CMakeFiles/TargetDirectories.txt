@@ -1,2 +1,0 @@
-C:/Users/Shakib/women_health/android/app/.cxx/RelWithDebInfo/5e3q394h/x86/CMakeFiles/edit_cache.dir
-C:/Users/Shakib/women_health/android/app/.cxx/RelWithDebInfo/5e3q394h/x86/CMakeFiles/rebuild_cache.dir

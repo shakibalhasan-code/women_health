@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/controller/intro_controller/payment_controller.dart';
 import 'package:women_health/core/models/product_model.dart';
+import 'package:women_health/views/screens/auth/login_screen.dart';
 import 'package:women_health/views/screens/marketplace/thank_you.dart';
 import '../../../core/services/api_services.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
@@ -30,11 +31,13 @@ class ProfileScreen extends StatelessWidget {
         leading: const SizedBox(),
       ),
       body: Obx(
-            () {
+        () {
           if (profileController.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else if (profileController.profile.value == null) {
-            return Center(child: Text(context.tr('failed_load_profile'))); // Translated "Failed to load profile."
+            return Center(
+                child: Text(context.tr(
+                    'failed_load_profile'))); // Translated "Failed to load profile."
           } else {
             final profile = profileController.profile.value!.user;
             return SingleChildScrollView(
@@ -46,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(20.r)),
+                          BorderRadius.vertical(bottom: Radius.circular(20.r)),
                     ),
                     child: Column(
                       children: [
@@ -56,50 +59,59 @@ class ProfileScreen extends StatelessWidget {
                           backgroundImage: profile?.profileImageUrl != null
                               ? NetworkImage(profile!.profileImageUrl!)
                               : const NetworkImage(
-                              "https://via.placeholder.com/150"),
+                                  "https://via.placeholder.com/150"),
                         ),
                         SizedBox(height: 10.h),
                         Text(
-                          profile?.name ?? context.tr("unknown_user"), // Translated "Unknown User"
+                          profile?.name ??
+                              context.tr(
+                                  "unknown_user"), // Translated "Unknown User"
                           style: TextStyle(
                               fontSize: 18.sp, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          profile?.email ?? context.tr("no_email"), // Translated "No Email"
+                          profile?.email ??
+                              context.tr("no_email"), // Translated "No Email"
                           style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                         ),
                         SizedBox(height: 10.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            profileStat(profile?.totalPosts.toString() ?? "0",
+                                context.tr("post")), // Translated "Post"
+                            profileStat(profile?.totalLikes.toString() ?? "0",
+                                context.tr("likes")), // Translated "Likes"
                             profileStat(
-                                profile?.totalPosts.toString() ?? "0", context.tr("post")), // Translated "Post"
-                            profileStat(
-                                profile?.totalLikes.toString() ?? "0", context.tr("likes")), // Translated "Likes"
-                            profileStat(profile?.totalComments.toString() ?? "0",
-                                context.tr("comments")), // Translated "Comments"
+                                profile?.totalComments.toString() ?? "0",
+                                context
+                                    .tr("comments")), // Translated "Comments"
                           ],
                         ),
                         SizedBox(height: 10.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _followStat(profile?.totalFollowers.toString() ?? "0",
-                                context.tr("followers")), // Translated "Followers"
+                            _followStat(
+                                profile?.totalFollowers.toString() ?? "0",
+                                context
+                                    .tr("followers")), // Translated "Followers"
                             SizedBox(width: 20.w),
                             _followStat(
                                 profile?.totalFollowing.toString() ?? "0",
-                                context.tr("following")), // Translated "Following"
+                                context
+                                    .tr("following")), // Translated "Following"
                           ],
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  profileOption(Icons.language, context.tr("language"), // Translated "Language"
+                  profileOption(Icons.language,
+                      context.tr("language"), // Translated "Language"
                       onTap: () => Get.to(LanguageScreen())),
                   Obx(
-                        () => profileOption(
+                    () => profileOption(
                       Icons.notifications,
                       context.tr("notification"), // Translated "Notification"
                       trailing: Switch(
@@ -111,11 +123,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  profileOption(Icons.info, context.tr("about_us"), // Translated "About us"
+                  profileOption(Icons.info,
+                      context.tr("about_us"), // Translated "About us"
                       onTap: () => Get.to(AboutUsScreen())),
-                  profileOption(Icons.lock, context.tr("change_pass"), // Translated "Change password"
+                  profileOption(Icons.lock,
+                      context.tr("change_pass"), // Translated "Change password"
                       onTap: () => Get.to(ChangePasswordScreen())),
-                  profileOption(Icons.logout, context.tr("log_out"), // Translated "Log out"
+                  profileOption(Icons.logout,
+                      context.tr("log_out"), // Translated "Log out"
                       color: Colors.red,
                       onTap: () => _showLogoutDialog(context)),
                 ],
@@ -132,7 +147,8 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.tr("log_out")), // Translated "Logout"
-        content: Text(context.tr("logout_confirmation")), // Translated "Are you sure you want to logout?"
+        content: Text(context.tr(
+            "logout_confirmation")), // Translated "Are you sure you want to logout?"
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -140,10 +156,10 @@ class ProfileScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              // Implement logout logic here
+              Get.offAll(LoginScreen());
             },
-            child: Text(context.tr("log_out"), style: TextStyle(color: Colors.red)), // Translated "Logout"
+            child: Text(context.tr("log_out"),
+                style: TextStyle(color: Colors.red)), // Translated "Logout"
           ),
         ],
       ),
@@ -167,8 +183,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(label,
-              style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+          Text(label, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
         ],
       ),
     );
@@ -181,8 +196,7 @@ class ProfileScreen extends StatelessWidget {
           value,
           style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
         ),
-        Text(label,
-            style: TextStyle(fontSize: 14.sp, color: Colors.black54)),
+        Text(label, style: TextStyle(fontSize: 14.sp, color: Colors.black54)),
       ],
     );
   }

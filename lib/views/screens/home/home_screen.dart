@@ -24,7 +24,7 @@ import 'components/home_card_widget.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final periodDataController = Get.find<PeriodDataController>();
+  final periodDataController = Get.put(PeriodDataController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +37,18 @@ class HomeScreen extends StatelessWidget {
             children: [
               // _buildHeader(),
               SizedBox(height: 10.h),
-              SizedBox(
-                width: 250,
-                height: 300,
-                child: MenstrualCyclePhaseView(
-                  size: 180.h,
-                  theme: MenstrualCycleTheme.arcs,
-                  phaseTextBoundaries: PhaseTextBoundaries.outside,
-                  isRemoveBackgroundPhaseColor: true,
-                  viewType: MenstrualCycleViewType.circleText,
-                  isAutoSetData: true,
+              RepaintBoundary(
+                child: SizedBox(
+                  width: 250,
+                  height: 300,
+                  child: MenstrualCyclePhaseView(
+                    size: 180.h,
+                    theme: MenstrualCycleTheme.arcs,
+                    phaseTextBoundaries: PhaseTextBoundaries.outside,
+                    isRemoveBackgroundPhaseColor: true,
+                    viewType: MenstrualCycleViewType.circleText,
+                    isAutoSetData: true,
+                  ),
                 ),
               ),
 

@@ -17,6 +17,7 @@ class AnalysisScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.tr("analysis")),
         centerTitle: true,
+        leading: const SizedBox(),
       ),
       body: SafeArea(
         child: Padding(

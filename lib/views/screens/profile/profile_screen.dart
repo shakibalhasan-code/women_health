@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:menstrual_cycle_widget/ui/graphs_view/menstrual_cycle_history_graph.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/controller/intro_controller/payment_controller.dart';
 import 'package:women_health/core/models/product_model.dart';
@@ -59,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
                           backgroundImage: profile?.profileImageUrl != null
                               ? NetworkImage(profile!.profileImageUrl!)
                               : const NetworkImage(
-                                  "https://via.placeholder.com/150"),
+                                  "https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="),
                         ),
                         SizedBox(height: 10.h),
                         Text(
@@ -133,6 +134,10 @@ class ProfileScreen extends StatelessWidget {
                       context.tr("log_out"), // Translated "Log out"
                       color: Colors.red,
                       onTap: () => _showLogoutDialog(context)),
+                  SizedBox(height: 10.h),
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: MenstrualCycleHistoryGraph()),
                 ],
               ),
             );

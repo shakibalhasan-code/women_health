@@ -1,13 +1,11 @@
-// lib/views/screens/home/components/menstrual_cycle_chart.dart
 
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 
-// This enum is also in your home screen, but it's good practice
-// for a component to be self-contained or import from a central location.
-enum CyclePhase { menstruation, follicular, ovulation, luteal }
+import '../../../../core/models/period_data.dart';
+
 
 class MenstrualCycleChart extends StatelessWidget {
   final int cycleLength;

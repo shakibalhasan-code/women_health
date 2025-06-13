@@ -17,7 +17,7 @@ class InitialBinding extends Bindings {
     Get.lazyPut(() => QuestionnaireController(),fenix: true);
     Get.lazyPut(() => MyTabController(),fenix: true);
     Get.lazyPut(() => UserHelper(),fenix: true);
-    Get.lazyPut(() => PeriodDataController(),fenix: true);
+    Get.lazyPut(() => PeriodController(),fenix: true);
     Get.lazyPut(() => MarketplaceController(), fenix: true);
     Get.lazyPut(()=> CommunityController(), fenix: true);
     Get.lazyPut(() => AuthController(), fenix: true);

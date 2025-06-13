@@ -135,9 +135,7 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.red,
                       onTap: () => _showLogoutDialog(context)),
                   SizedBox(height: 10.h),
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: MenstrualCycleHistoryGraph()),
+
                 ],
               ),
             );

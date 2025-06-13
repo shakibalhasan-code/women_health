@@ -4,17 +4,39 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:menstrual_cycle_widget/menstrual_cycle_widget_base.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:women_health/utils/constant/app_constant.dart';
 import 'package:women_health/utils/constant/app_theme.dart';
 import 'package:women_health/utils/constant/binding.dart';
 import 'package:women_health/utils/constant/route.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
+import 'controller/period_data_controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   // InitializationStatus status = await MobileAds.instance.initialize();
   // if(status.adapterStatuses.)
+
+
+  // 1. Put the PeriodController into memory so it's available everywhere.
+  final PeriodController controller = Get.put(PeriodController());
+
+  // 2. Check SharedPreferences for user's initial answers and existing period data.
+  final prefs = await SharedPreferences.getInstance();
+  final bool hasOnboardingData = prefs.containsKey('userResponses');
+  final bool hasProcessedPeriodData = prefs.containsKey('periods_data');
+
+  // 3. If the user has finished onboarding BUT we haven't created the first period yet,
+  //    then run the initialization function.
+  if (hasOnboardingData && !hasProcessedPeriodData) {
+    debugPrint("Onboarding data found, initializing first period...");
+    await controller.initializeFromOnboardingData();
+  } else {
+    debugPrint("Already initialized or no onboarding data. Loading existing data...");
+    // The controller's onInit will automatically call loadPeriodData, so no action needed here.
+  }
 
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
   // Add the initialization code with your OneSignal App ID
